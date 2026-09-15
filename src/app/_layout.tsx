@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from 'react-native';
 
@@ -9,10 +9,31 @@ SplashScreen.preventAutoHideAsync();
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <>
       <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#0F0A1E' },
+          animation: 'slide_from_right',
+        }}
+      >
+        {/* Tab screens rendered via AppTabs */}
+        <Stack.Screen name="index" />
+        <Stack.Screen name="explore" />
+
+        {/* Full-screen quiz and results */}
+        <Stack.Screen
+          name="quiz"
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="results"
+          options={{ animation: 'fade' }}
+        />
+      </Stack>
+    </>
   );
 }
