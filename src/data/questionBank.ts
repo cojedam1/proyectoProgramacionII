@@ -1,0 +1,4593 @@
+import { Question } from '@/engine/AntigravityEngine';
+
+export const questionBank: Record<string, Question[]> = {
+  // --- SECCIÓN 1: FUNDAMENTOS DE TYPESCRIPT ---
+  tipos_primitivos: [
+    {
+      id: 'prim_1',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es el tipo primitivo en TypeScript para representar valores numéricos enteros y flotantes?',
+      options: ['int', 'float', 'number', 'decimal'],
+      correctOptionIndex: 2,
+      explanation: 'En TypeScript, todos los números se representan con el tipo primitivo "number".',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_2',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo primitivo representa la ausencia intencional de cualquier valor de objeto?',
+      options: ['undefined', 'null', 'void', 'never'],
+      correctOptionIndex: 1,
+      explanation: '`null` representa la ausencia explícita e intencional de un valor.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_3',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo representa una variable que ha sido declarada pero aún no se le ha asignado un valor?',
+      options: ['null', 'void', 'undefined', 'any'],
+      correctOptionIndex: 2,
+      explanation: '`undefined` indica que a una variable no se le ha asignado un valor explícito.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_4',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es el tipo de retorno de una función que no retorna ningún valor?',
+      options: ['null', 'never', 'void', 'unknown'],
+      correctOptionIndex: 2,
+      explanation: '`void` se utiliza como tipo de retorno para funciones que no devuelven un valor.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_5',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo representa valores que NUNCA suceden (como una función que siempre lanza un error o un bucle infinito)?',
+      options: ['void', 'never', 'null', 'unknown'],
+      correctOptionIndex: 1,
+      explanation: '`never` representa el tipo de valores que nunca ocurren o funciones que no tienen un punto de retorno normal.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_6',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es la principal diferencia entre `any` y `unknown`?',
+      options: [
+        'No hay diferencia, son sinónimos',
+        '`unknown` requiere verificación de tipos o casting antes de usarlo, mientras que `any` no',
+        '`any` es más seguro que `unknown`',
+        '`unknown` solo acepta strings y numbers'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`unknown` es la contraparte segura de `any`. Te obliga a hacer type checking antes de operar con la variable.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_7',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo primitivo se introdujo en ES2020 para representar enteros de precisión arbitraria?',
+      options: ['BigInt / bigint', 'Int64', 'Long', 'LargeNumber'],
+      correctOptionIndex: 0,
+      explanation: '`bigint` permite trabajar con números enteros más grandes que `Number.MAX_SAFE_INTEGER`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_8',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es el tipo de la variable `x` en: `let x = "Hola Mundo";` por inferencia de tipos?',
+      options: ['any', 'string', 'String', 'literal'],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript infiere automáticamente el tipo `string` a partir del valor asignado.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_9',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo infiere TypeScript para `const x = "Hola Mundo";`?',
+      options: ['string', '"Hola Mundo"', 'any', 'text'],
+      correctOptionIndex: 1,
+      explanation: 'Al usar `const`, el valor no cambiará, por lo que TypeScript infiere el tipo literal especifica `"Hola Mundo"`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'prim_10',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué sucede si intentas reasignar `let flag: boolean = true; flag = 1;`?',
+      options: [
+        'Se compila correctamente porque 1 es truthy',
+        'TypeScript arroja un error de compilación por incompatibilidad de tipos',
+        'El valor se convierte automáticamente a string',
+        'Se ejecuta solo en tiempo de ejecución'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript no permite asignar un `number` a una variable declarada como `boolean`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_11',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es el tipo primitivo para identificadores únicos creados con `Symbol()`?',
+      options: ['symbol', 'Unique', 'Id', 'Key'],
+      correctOptionIndex: 0,
+      explanation: '`symbol` es un tipo primitivo en JavaScript/TypeScript usado para crear propiedades únicas en objetos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_12',
+      topic: 'tipos_primitivos',
+      prompt: 'Con la opción `strictNullChecks: true`, ¿es válido asignar `null` a una variable de tipo `string`?',
+      options: ['Sí, siempre', 'No, genera un error de tipo', 'Solo si se usa `var`', 'Sí, pero emite un warning'],
+      correctOptionIndex: 1,
+      explanation: 'Con `strictNullChecks`, `null` y `undefined` no son asignables a otros tipos a menos que se use una unión (`string | null`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'prim_13',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué devuelve `typeof null` en JavaScript/TypeScript?',
+      options: ['"null"', '"undefined"', '"object"', '"boolean"'],
+      correctOptionIndex: 2,
+      explanation: 'Debido a un comportamiento histórico en JS, `typeof null` devuelve `"object"`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_14',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cómo declaras explícitamente un tipo de unión entre `string` y `number`?',
+      options: ['string & number', 'string | number', 'string + number', 'Union<string, number>'],
+      correctOptionIndex: 1,
+      explanation: 'El operador `|` crea un tipo de unión que permite valores de cualquiera de los tipos especificados.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_15',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es la diferencia entre el tipo en minúscula `string` y el objeto wrapper `String` en TypeScript?',
+      options: [
+        'No hay diferencia',
+        '`string` es el tipo primitivo, mientras que `String` es el objeto envolvente. Se recomienda usar `string`.',
+        '`String` es más rápido',
+        '`string` solo existe en JavaScript'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Siempre se deben usar los tipos en minúsculas (`string`, `number`, `boolean`) para los primitivos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'prim_16',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué tipo de retorno tiene una función que contiene un `while(true) {}` infinito?',
+      options: ['void', 'never', 'undefined', 'null'],
+      correctOptionIndex: 1,
+      explanation: 'Una función con un bucle infinito que nunca finaliza su ejecución tiene un tipo de retorno `never`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'prim_17',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué ocurre al acceder a una propiedad de una variable de tipo `unknown`?',
+      options: [
+        'Funciona sin problemas',
+        'TypeScript genera un error si no se estrecha (narrowing) el tipo previamente',
+        'Devuelve `undefined` automáticamente',
+        'La variable se convierte automáticamente a `any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'No puedes realizar operaciones ni acceder a propiedades en un valor `unknown` sin antes verificar su tipo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'prim_18',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cuál es el valor predeterminado de una variable declarada con `let x: number;` en runtime antes de ser asignada?',
+      options: ['0', 'null', 'undefined', 'NaN'],
+      correctOptionIndex: 2,
+      explanation: 'En JavaScript/TypeScript, las variables no inicializadas tienen el valor `undefined` en tiempo de ejecución.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_19',
+      topic: 'tipos_primitivos',
+      prompt: '¿Qué afirmación es FALSA sobre el tipo `any`?',
+      options: [
+        'Permite llamar a cualquier método sobre la variable',
+        'Desactiva el análisis estático de tipos de TypeScript',
+        'Garantiza la seguridad de tipos en tiempo de compilación',
+        'Puede asignarse a prácticamente cualquier otro tipo'
+      ],
+      correctOptionIndex: 2,
+      explanation: '`any` desactiva las comprobaciones de tipo, por lo que NO garantiza la seguridad de tipos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'prim_20',
+      topic: 'tipos_primitivos',
+      prompt: '¿Cómo se le llama al proceso por el cual TypeScript determina el tipo de una variable sin una anotación explícita?',
+      options: ['Inferencia de tipos', 'Casting de tipos', 'Transformación de tipos', 'Estrechamiento de tipos'],
+      correctOptionIndex: 0,
+      explanation: 'La inferencia de tipos (Type Inference) permite a TypeScript deducir tipos automáticamente a partir de los valores iniciales.',
+      difficulty: 'easy',
+    },
+  ],
+
+  variables_constantes: [
+    {
+      id: 'var_1',
+      topic: 'variables_constantes',
+      prompt: '¿Qué palabra clave en TypeScript declara una variable de ámbito de bloque cuyo valor no puede ser reasignado?',
+      options: ['var', 'let', 'const', 'static'],
+      correctOptionIndex: 2,
+      explanation: '`const` declara variables de ámbito de bloque que no se pueden reasignar.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_2',
+      topic: 'variables_constantes',
+      prompt: '¿Qué ocurre si intentas modificar las propiedades de un objeto declarado con `const obj = { a: 1 };`?',
+      options: [
+        'Error de compilación porque el objeto es inmutable',
+        'Se permite modificar las propiedades, pero no reasignar `obj`',
+        'Se genera un error en tiempo de ejecución',
+        '`obj` se convierte en `readonly` automáticamente'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`const` evita la reasignación de la binding de la variable, pero no hace inmutable el contenido del objeto.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_3',
+      topic: 'variables_constantes',
+      prompt: '¿Cuál es el ámbito (scope) de una variable declarada con `var`?',
+      options: ['Ámbito de bloque', 'Ámbito de función o global', 'Ámbito de clase únicamente', 'Ámbito de archivo únicamente'],
+      correctOptionIndex: 1,
+      explanation: '`var` tiene ámbito de función (function-scoped), a diferencia de `let` y `const` que son de bloque.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_4',
+      topic: 'variables_constantes',
+      prompt: '¿Qué es la "Temporal Dead Zone" (TDZ) en relación con `let` y `const`?',
+      options: [
+        'Un área de memoria muerta',
+        'El periodo entre el inicio del bloque y la declaración de la variable donde no se puede acceder a ella',
+        'Un error al eliminar una variable',
+        'Cuando una variable expira tras 1 hora'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'En la TDZ, acceder a una variable declarada con `let` o `const` antes de su declaración causa un `ReferenceError`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_5',
+      topic: 'variables_constantes',
+      prompt: '¿Cómo se define una anotación de tipo explícita para una variable `edad`?',
+      options: ['let edad = 25: number;', 'let edad: number = 25;', 'let number edad = 25;', 'let edad as number = 25;'],
+      correctOptionIndex: 1,
+      explanation: 'La sintaxis correcta para la anotación de tipo es `variable: tipo`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_6',
+      topic: 'variables_constantes',
+      prompt: '¿Qué hace la aseveración `const obj = { name: "Ana" } as const;`?',
+      options: [
+        'Convierte el objeto en una clase',
+        'Hace que todas las propiedades del objeto sean de solo lectura (`readonly`) y literales',
+        'Elimina el objeto de la memoria',
+        'No tiene ningún efecto'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`as const` crea una afirmación de const (const assertion) haciendo que todas sus propiedades sean `readonly` y de tipo literal.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_7',
+      topic: 'variables_constantes',
+      prompt: '¿Qué es la shadowing (sombra) de variables?',
+      options: [
+        'Ocultar variables con un prefijo especial',
+        'Declarar una variable en un bloque interno con el mismo nombre que una en el bloque externo',
+        'Un error de compilación cuando dos variables se llaman igual',
+        'Convertir una variable a `private`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La sombra de variables ocurre cuando una variable local dentro de un ámbito tiene el mismo nombre que una en un ámbito superior.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_8',
+      topic: 'variables_constantes',
+      prompt: '¿Es posible redeclarar la misma variable con `let` dentro del mismo bloque?',
+      options: ['Sí, como con `var`', 'No, causa un error de redeclaración', 'Sí, si cambia su tipo', 'Solo si no está inicializada'],
+      correctOptionIndex: 1,
+      explanation: 'A diferencia de `var`, `let` no permite redeclarar la misma variable en el mismo ámbito de bloque.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_9',
+      topic: 'variables_constantes',
+      prompt: '¿Qué sucede si declaras una constante sin inicializar `const x: number;`?',
+      options: ['Se inicializa en 0', 'Se inicializa en `undefined`', 'Genera un error de compilación porque las constantes deben inicializarse al declararse', 'Se convierte en `let`'],
+      correctOptionIndex: 2,
+      explanation: 'Las declaraciones `const` deben inicializarse con un valor en el momento de su declaración.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_10',
+      topic: 'variables_constantes',
+      prompt: '¿Cuál de los siguientes es un nombre de variable VÁLIDO en TypeScript?',
+      options: ['let 123user = "Juan";', 'let user-name = "Juan";', 'let $userName = "Juan";', 'let let = "Juan";'],
+      correctOptionIndex: 2,
+      explanation: 'Los nombres de variables pueden comenzar con letras, `$` o `_`, pero no con números ni guiones simples ni palabras reservadas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_11',
+      topic: 'variables_constantes',
+      prompt: '¿Qué imprime el siguiente código? `let a = 1; { let a = 2; } console.log(a);`',
+      options: ['1', '2', 'undefined', 'ReferenceError'],
+      correctOptionIndex: 0,
+      explanation: 'Debido al ámbito de bloque de `let`, la variable `a` interna no modifica la `a` externa.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_12',
+      topic: 'variables_constantes',
+      prompt: '¿Cuál es el comportamiento de Hoisting con variables declaradas con `var`?',
+      options: [
+        'Se eleva la declaración y la inicialización',
+        'Se eleva la declaración inicializada con `undefined`, pero no la asignación',
+        'No sufren hoisting',
+        'Producen un SyntaxError inmediatamente'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Con `var`, la declaración se eleva al inicio del ámbito con valor `undefined`, la asignación se mantiene en su lugar original.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_13',
+      topic: 'variables_constantes',
+      prompt: '¿Qué significa que TypeScript utilice un sistema de tipos "estructural"?',
+      options: [
+        'Los tipos se comparan por su nombre explícito',
+        'Dos tipos son compatibles si sus miembros o forma estructural son compatibles, sin importar su nombre',
+        'Solo funciona con la estructura de archivos',
+        'No permite usar clases'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El tipado estructural (duck typing) basa la compatibilidad de tipos en la forma o miembros que posee el tipo, no en su nombre.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_14',
+      topic: 'variables_constantes',
+      prompt: '¿Cuál es la buena práctica recomendada para declarar variables en TypeScript moderno?',
+      options: [
+        'Usar `var` para todo',
+        'Usar `const` por defecto, y `let` solo si el valor necesita ser reasignado',
+        'Usar `let` para todo',
+        'Evitar usar `const` por rendimiento'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Usar `const` por defecto previene reasignaciones accidentales y mejora la legibilidad del código.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'var_15',
+      topic: 'variables_constantes',
+      prompt: '¿Qué ocurre al hacer destructuring con valor por defecto: `const { name = "Invitado" } = user;` si `user.name` es `undefined`?',
+      options: ['`name` será `undefined`', '`name` tomará el valor `"Invitado"`', 'Se lanza un TypeError', '`name` será `null`'],
+      correctOptionIndex: 1,
+      explanation: 'El valor por defecto se aplica si la propiedad es exactamente `undefined`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_16',
+      topic: 'variables_constantes',
+      prompt: '¿Qué pasa si en el destructuring anterior `user.name` es `null`?',
+      options: ['`name` toma `"Invitado"`', '`name` toma `null`', 'Lanza un error', '`name` toma `""`'],
+      correctOptionIndex: 1,
+      explanation: 'Los valores por defecto en desestructuración solo se activan con `undefined`, no con `null`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_17',
+      topic: 'variables_constantes',
+      prompt: '¿Qué operador de TypeScript/JS se utiliza para asignación condicional nula (Nullish Coalescing)?',
+      options: ['||', '??', '?:', '&&'],
+      correctOptionIndex: 1,
+      explanation: '`??` devuelve el lado derecho solo si el lado izquierdo es `null` o `undefined`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'var_18',
+      topic: 'variables_constantes',
+      prompt: '¿En qué se diferencia `x ?? y` de `x || y`?',
+      options: [
+        'Son idénticos',
+        '`||` considera falsos a `0`, `""`, `false`; mientras que `??` solo considera falsos a `null` y `undefined`.',
+        '`??` solo funciona con números',
+        '`||` es exclusivo de TypeScript'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`||` evalúa cualquier valor falsy (incluyendo 0 y ""), mientras que `??` únicamente evalúa `null` o `undefined`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_19',
+      topic: 'variables_constantes',
+      prompt: '¿Cómo declaras una variable global que existe en el entorno pero no está definida en el archivo (ej. `window`)?',
+      options: ['let window: any;', 'declare const window: any;', 'global window: any;', 'import window;'],
+      correctOptionIndex: 1,
+      explanation: '`declare` le informa a TypeScript que la variable existe en el entorno de ejecución global.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'var_20',
+      topic: 'variables_constantes',
+      prompt: '¿Cuál es el operador de Encadenamiento Opcional (Optional Chaining)?',
+      options: ['?.', '!!', '?:', '->'],
+      correctOptionIndex: 0,
+      explanation: '`?.` permite leer propiedades o llamar métodos en objetos sin causar error si la referencia es `null` o `undefined`.',
+      difficulty: 'easy',
+    },
+  ],
+
+  arrays_tuplas: [
+    {
+      id: 'arr_1',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cuál es la sintaxis estándar para declarar un arreglo de cadenas de texto en TypeScript?',
+      options: ['string[]', 'Array<string>', 'Ambas son válidas', 'Ninguna es válida'],
+      correctOptionIndex: 2,
+      explanation: 'Tanto `string[]` como la sintaxis genérica `Array<string>` son completamente válidas y equivalentes.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_2',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué es una Tupla en TypeScript?',
+      options: [
+        'Un arreglo que solo acepta números',
+        'Un arreglo con un número fijo de elementos cuyos tipos en posiciones específicas son conocidos',
+        'Un objeto con claves numéricas',
+        'Una función con dos argumentos'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Una tupla es un tipo de arreglo de longitud fija con tipos definidos para cada posición especificada.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_3',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cómo declaras una tupla que contenga un `string` en la primera posición y un `number` en la segunda?',
+      options: ['[string, number]', '(string | number)[]', 'Tuple<string, number>', '{ 0: string, 1: number }'],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis correcta para declarar el tipo tupla es `[tipo1, tipo2]`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_4',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué sucede si intentas hacer `let persona: [string, number] = [25, "Juan"];`?',
+      options: [
+        'Se compila sin problemas',
+        'Error de compilación porque los tipos en cada posición no coinciden',
+        'TypeScript intercambia automáticamente los valores',
+        'Se convierte en un arreglo ordinario'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las tuplas imponen un orden estricto de tipos según el índice.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_5',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cómo declaras un arreglo inmutable (de solo lectura)?',
+      options: ['readonly number[]', 'ReadonlyArray<number>', 'Ambas son correctas', 'const number[]'],
+      correctOptionIndex: 2,
+      explanation: 'Tanto `readonly number[]` como `ReadonlyArray<number>` impiden operaciones mutables como `.push()` o `.pop()`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_6',
+      topic: 'arrays_tuplas',
+      prompt: '¿Se pueden usar elementos opcionales dentro de una Tupla?',
+      options: [
+        'No, las tuplas son estrictamente fijas',
+        'Sí, añadiendo `?` al tipo: `[string, number?]`',
+        'Solo si es el primer elemento',
+        'Solo con el tipo `any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El modificador `?` permite marcar elementos opcionales al final de la tupla.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_7',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué tipo tiene el elemento rest en una tupla como `[string, ...number[]]`?',
+      options: [
+        'Un string seguido de cero o más números',
+        'Un error de sintaxis',
+        'Un arreglo de cadenas y números mezclados',
+        'Una tupla infinita'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El operador rest `...number[]` permite que la tupla acepte cualquier cantidad de números tras el primer elemento string.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'arr_8',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué devuelve el método de arreglos `.map()`?',
+      options: [
+        'El mismo arreglo modificado en su lugar',
+        'Un nuevo arreglo con los resultados de aplicar la función a cada elemento',
+        'Un número con la suma de los elementos',
+        'Un valor booleano'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`.map()` crea un nuevo arreglo transformando cada elemento sin mutar el arreglo original.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_9',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué tipo de dato infiere TypeScript para `let valores = [10, "hola", true];`?',
+      options: ['any[]', '(number | string | boolean)[]', '[number, string, boolean]', 'unknown[]'],
+      correctOptionIndex: 1,
+      explanation: 'Infiere una unión de los tipos de los elementos presentes: `(number | string | boolean)[]`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_10',
+      topic: 'arrays_tuplas',
+      prompt: ' Históricamente en TypeScript, ¿qué pasaba si hacías `.push()` en una tupla `[string, number]`?',
+      options: [
+        'Lanzaba error de compilación siempre',
+        'Se permitía insertar elementos que cumplieran con el tipo de unión `(string | number)`',
+        'Destruía la tupla',
+        'Se convertía en objeto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Debido a la implementación subyacente de arreglos en JS, `.push()` solía permitir añadir elementos que coincidieran con los tipos de la tupla.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'arr_11',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cómo declaras una matriz (arreglo bidimensional de números)?',
+      options: ['number[][]', 'Array<number[]>', 'Ambas son válidas', 'Matrix<number>'],
+      correctOptionIndex: 2,
+      explanation: 'Tanto `number[][]` como `Array<number[]>` son válidos para arreglos bidimensionales.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_12',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué método se usa para filtrar elementos de un arreglo que cumplen cierta condición?',
+      options: ['.find()', '.filter()', '.select()', '.reduce()'],
+      correctOptionIndex: 1,
+      explanation: '`.filter()` devuelve un nuevo arreglo conteniendo solo los elementos que hacen retornar `true` al callback.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_13',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué método devuelve el PRIMER elemento de un arreglo que cumple una condición dada?',
+      options: ['.filter()', '.first()', '.find()', '.search()'],
+      correctOptionIndex: 2,
+      explanation: '`.find()` retorna el primer elemento que satisface la función de prueba, o `undefined` si ninguno cumple.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_14',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cuál es el resultado de desestructurar una tupla `const [x, y] = [10, 20];`?',
+      options: ['x es 10, y es 20', 'x es [10, 20], y es undefined', 'Error de sintaxis', 'x es 20, y es 10'],
+      correctOptionIndex: 0,
+      explanation: 'La desestructuración asigna posicionalmente `x = 10` e `y = 20`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_15',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué hace la sintaxis con nombre en tuplas: `type Coordenada = [x: number, y: number];`?',
+      options: [
+        'Crea un objeto en lugar de una tupla',
+        'Proporciona etiquetas/nombres descriptivos para los elementos de la tupla en el IDE sin cambiar el comportamiento',
+        'Obliga a pasar objetos',
+        'Genera código adicional en JS'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Named tuple members mejoran la documentación y ayuda visual en editores sin alterar el tipo real.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'arr_16',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué método acumula los elementos de un arreglo para reducirlos a un solo valor final?',
+      options: ['.reduce()', '.collect()', '.sum()', '.aggregate()'],
+      correctOptionIndex: 0,
+      explanation: '`.reduce()` ejecuta una función reductora sobre cada elemento, devolviendo un único valor acumulado.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_17',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué operador se usa para expandir o concatenar elementos de un arreglo en otro?',
+      options: ['Operador Rest (`...`)', 'Operador Spread (`...`)', 'Operador Pipe (`|>`)', 'Operador Concat (`++`)'],
+      correctOptionIndex: 1,
+      explanation: 'El operador Spread `...` despliega los elementos de un iterable dentro de un nuevo arreglo u objeto.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'arr_18',
+      topic: 'arrays_tuplas',
+      prompt: 'Con la bandera `noUncheckedIndexedAccess: true`, ¿cuál es el tipo de `list[0]` en `const list: number[] = [1, 2];`?',
+      options: ['number', 'number | undefined', 'never', 'unknown'],
+      correctOptionIndex: 1,
+      explanation: 'Con esta bandera activa, los accesos por índice a arreglos incluyen `undefined` por seguridad, previniendo errores fuera de límites.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'arr_19',
+      topic: 'arrays_tuplas',
+      prompt: '¿Cómo se comprueba si una variable es un Arreglo en JavaScript/TypeScript?',
+      options: ['typeof arr === "array"', 'arr instanceof Array / Array.isArray(arr)', 'arr.isArray()', 'isType(arr, "array")'],
+      correctOptionIndex: 1,
+      explanation: '`Array.isArray(variable)` es el método estándar recomendado para comprobar si algo es un arreglo.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'arr_20',
+      topic: 'arrays_tuplas',
+      prompt: '¿Qué método modifica un arreglo en su lugar (in-place) para añadir elementos al final?',
+      options: ['.concat()', '.push()', '.append()', '.add()'],
+      correctOptionIndex: 1,
+      explanation: '`.push()` muta el arreglo agregando elementos al final y devuelve la nueva longitud.',
+      difficulty: 'easy',
+    },
+  ],
+
+  // --- SECCIÓN 2: TIPOS COMPUESTOS ---
+  interfaces: [
+    {
+      id: 'int_1',
+      topic: 'interfaces',
+      prompt: '¿Qué palabra clave se usa para definir una Interfaz en TypeScript?',
+      options: ['type', 'interface', 'struct', 'class'],
+      correctOptionIndex: 1,
+      explanation: '`interface` se utiliza para definir contratos estructurales de objetos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_2',
+      topic: 'interfaces',
+      prompt: '¿Cómo declaras una propiedad opcional dentro de una interfaz?',
+      options: ['nombre?: string;', 'optional nombre: string;', 'nombre: string = null;', 'nombre!: string;'],
+      correctOptionIndex: 0,
+      explanation: 'El signo de interrogación `?` indica que la propiedad puede no estar presente (o ser `undefined`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_3',
+      topic: 'interfaces',
+      prompt: '¿Qué modificador evita que una propiedad de interfaz sea modificada tras la creación del objeto?',
+      options: ['const', 'static', 'readonly', 'private'],
+      correctOptionIndex: 2,
+      explanation: '`readonly` hace que una propiedad sea de solo lectura después de su inicialización.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_4',
+      topic: 'interfaces',
+      prompt: '¿Qué palabra clave permite a una interfaz heredar propiedades de otra interfaz?',
+      options: ['implements', 'extends', 'inherits', 'includes'],
+      correctOptionIndex: 1,
+      explanation: '`extends` permite a una interfaz heredar los miembros de una o más interfaces.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_5',
+      topic: 'interfaces',
+      prompt: '¿Qué ocurre si declaras dos interfaces con el MISMO nombre en el mismo ámbito?',
+      options: [
+        'Error de compilación por nombre duplicado',
+        'TypeScript las combina automáticamente (Declaration Merging)',
+        'La segunda interfaz sobrescribe por completo a la primera',
+        'Se convierten en clases automáticamente'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El llamado "Declaration Merging" combina las declaraciones con el mismo nombre en una sola interfaz.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_6',
+      topic: 'interfaces',
+      prompt: '¿Cómo defines un firma de índice (Index Signature) para un objeto que acepta cualquier clave string y valores numéricos?',
+      options: [
+        '{ [key: string]: number }',
+        '{ key: string, value: number }',
+        'Map<string, number>',
+        'Interface<string, number>'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`[key: string]: number` permite declarar que el objeto puede tener cualquier cantidad de propiedades dinámicas numéricas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_7',
+      topic: 'interfaces',
+      prompt: '¿Puede una interfaz describir la firma de una función (Function Type)?',
+      options: [
+        'No, solo describe objetos con propiedades',
+        'Sí, usando una firma de llamada sin nombre de propiedad: `(param: string): void;`',
+        'Solo si incluye métodos llamados `execute`',
+        'Solo usando la palabra clave `function`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Una interfaz puede definir firmas de llamada para representar tipos de funciones ejecutables.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_8',
+      topic: 'interfaces',
+      prompt: '¿Pueden las interfaces extender MÚLTIPLES interfaces a la vez?',
+      options: [
+        'No, solo herencia simple',
+        'Sí, separándolas por comas: `interface C extends A, B {}`',
+        'Solo con el operador `&`',
+        'Solo usando clases intermedias'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript permite que una interfaz extienda múltiples interfaces simultáneamente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_9',
+      topic: 'interfaces',
+      prompt: '¿Qué palabra clave usa una CLASE para asegurar que cumple con el contrato de una Interfaz?',
+      options: ['extends', 'implements', 'uses', 'apply'],
+      correctOptionIndex: 1,
+      explanation: '`implements` hace que una clase se comprometa a cumplir la estructura requerida por una interfaz.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_10',
+      topic: 'interfaces',
+      prompt: '¿Las interfaces existen en el código JavaScript compilado final?',
+      options: [
+        'Sí, se convierten en objetos JS',
+        'No, son completamente eliminadas durante la transpilación (Type Erasure)',
+        'Se convierten en funciones constructoras',
+        'Se convierten en comentarios'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las interfaces son construcciones exclusivas en tiempo de compilación y no generan código en JS.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_11',
+      topic: 'interfaces',
+      prompt: '¿Es posible definir una firma constructora (Construct Signature) en una interfaz?',
+      options: [
+        'No, las interfaces no pueden tratar con instanciación',
+        'Sí, usando `new (param: string): MiClase;`',
+        'Solo mediante `constructor()`',
+        'Solo usando decoradores'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`new ()` en una interfaz describe que el objeto puede ser instanciado con el operador `new`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'int_12',
+      topic: 'interfaces',
+      prompt: '¿Qué sucede si una clase implementa una interfaz pero le falta un método requerido?',
+      options: [
+        'Se compila pero falla al ejecutar',
+        'TypeScript genera un error de compilación indicando la falta del método',
+        'El método se crea automáticamente como vacío',
+        'La clase se convierte en abstracta'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Si falta alguna propiedad o método requerido por la interfaz, el compilador emitirá un error.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_13',
+      topic: 'interfaces',
+      prompt: '¿Puede una interfaz extender una Clase?',
+      options: [
+        'No, las interfaces solo extienden otras interfaces',
+        'Sí, hereda los miembros de la clase pero no su implementación',
+        'Sí, e incluye también la implementación de la clase',
+        'Solo si la clase es abstracta'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Una interfaz puede extender una clase, heredando la declaración de sus miembros sin traer sus métodos concretos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'int_14',
+      topic: 'interfaces',
+      prompt: '¿Cómo declaras una propiedad de método dentro de una interfaz?',
+      options: [
+        'saludar(): void;',
+        'saludar: () => void;',
+        'Ambas son válidas',
+        'function saludar(): void;'
+      ],
+      correctOptionIndex: 2,
+      explanation: 'Tanto la sintaxis de método `saludar(): void;` como la de propiedad de función `saludar: () => void;` son válidas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_15',
+      topic: 'interfaces',
+      prompt: '¿Qué diferencia hay entre la sintaxis de método `foo()` y propiedad de función `foo: () => void` respecto al variance checking?',
+      options: [
+        'No hay diferencia',
+        'Las propiedades de función tienen bivariance en parámetros, mientras que los métodos son contravariantes bajo `strictFunctionTypes`',
+        'Los métodos son bivariantes bajo `strictFunctionTypes` mientras que las propiedades de función son estrictas',
+        'Los métodos son siempre privados'
+      ],
+      correctOptionIndex: 2,
+      explanation: 'Con `strictFunctionTypes: true`, las firmas de métodos se comprueban bivariantemente por razones de compatibilidad, mientras que las propiedades de función se comprueban estrictamente (contravarianza).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'int_16',
+      topic: 'interfaces',
+      prompt: '¿Pueden las propiedades `readonly` de una interfaz modificarse dentro del constructor de una clase que la implementa?',
+      options: [
+        'No, nunca',
+        'Sí, durante la inicialización de la propiedad en el constructor de la clase',
+        'Solo si es un atributo público',
+        'Solo con `as any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las propiedades `readonly` de la clase pueden asignarse durante la construcción de la instancia.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'int_17',
+      topic: 'interfaces',
+      prompt: '¿Cuál es la mejor práctica general al nombrar interfaces en TypeScript moderno?',
+      options: [
+        'Usar el prefijo `I` (ej: `IUsuario`) como en C#',
+        'Usar PascalCase simple sin prefijos (ej: `Usuario`)',
+        'Usar todo en mayúsculas (ej: `USUARIO`)',
+        'Usar snake_case (ej: `usuario_interface`)'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La guía oficial de TypeScript recomienda no usar el prefijo `I` y emplear simplemente PascalCase.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'int_18',
+      topic: 'interfaces',
+      prompt: '¿Qué ocurre con las propiedades extra en literales de objeto al pasarlos a una función que espera una interfaz `fn(user: Usuario)`?',
+      options: [
+        'Se ignoran en silencio',
+        'TypeScript realiza una comprobación de propiedades en exceso (Excess Property Check) y arroja un error',
+        'Se eliminan automáticamente del objeto',
+        'Se aceptan sin problema'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Para literales de objeto directos, TypeScript aplica Excess Property Checking previniendo propiedades no declaradas en la interfaz.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'int_19',
+      topic: 'interfaces',
+      prompt: '¿Cómo se evita el Excess Property Checking en un literal de objeto directo?',
+      options: [
+        'Asignando primero el literal a una variable intermedia o usando una afirmación de tipo `as Interface`',
+        'Es imposible evitarlo',
+        'Usando `const`',
+        'Eliminando las propiedades'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Asignar el objeto a una variable deshace la comprobación estricta de propiedades extra directas.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'int_20',
+      topic: 'interfaces',
+      prompt: '¿Cuál es la principal ventaja de utilizar interfaces frente a type aliases para objetos en librerías públicas?',
+      options: [
+        'Son más rápidas de escribir',
+        'Permiten Declaration Merging para que los usuarios de la librería puedan extenderlas globalmente',
+        'Soportan primitivos',
+        'Se compilan a JS'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El Declaration Merging de las interfaces permite a los desarrolladores augmentar las definiciones de la librería fácilmente.',
+      difficulty: 'medium',
+    },
+  ],
+
+  type_aliases: [
+    {
+      id: 'type_1',
+      topic: 'type_aliases',
+      prompt: '¿Qué palabra clave se usa para declarar un Alias de Tipo en TypeScript?',
+      options: ['interface', 'alias', 'type', 'define'],
+      correctOptionIndex: 2,
+      explanation: 'La palabra clave `type` crea un nuevo nombre (alias) para cualquier tipo de dato.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_2',
+      topic: 'type_aliases',
+      prompt: '¿Cómo declaras un tipo de unión que acepte `string` o `number`?',
+      options: ['type MiTipo = string & number;', 'type MiTipo = string | number;', 'type MiTipo = string + number;', 'type MiTipo = Union<string, number>;'],
+      correctOptionIndex: 1,
+      explanation: 'El operador pipe `|` define tipos de unión (Union Types).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_3',
+      topic: 'type_aliases',
+      prompt: '¿Qué operador se utiliza para crear Tipos de Intersección (combinar múltiples tipos en uno)?',
+      options: ['|', '&', '+', '&&'],
+      correctOptionIndex: 1,
+      explanation: 'El ampersand `&` combina múltiples tipos exigiendo que el valor cumpla con TODAS las estructuras.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_4',
+      topic: 'type_aliases',
+      prompt: '¿Qué es un Tipo Literal (Literal Type)?',
+      options: [
+        'Un tipo que representa exactamente un valor específico como `"exito"` o `404`',
+        'Cualquier tipo de tipo string',
+        'Un error en la sintaxis',
+        'Una constante de JavaScript'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Un tipo literal restringe una variable a un conjunto exacto de valores específicos (ej. `"rojo" | "verde" | "azul"`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_5',
+      topic: 'type_aliases',
+      prompt: '¿Pueden los Type Aliases utilizar Declaration Merging?',
+      options: [
+        'Sí, igual que las interfaces',
+        'No, declarar dos `type` con el mismo nombre genera un error de identificador duplicado',
+        'Solo si son de tipo objeto',
+        'Solo en modo no estricto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'A diferencia de las interfaces, los `type` aliases no se pueden fusionar automáticamente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_6',
+      topic: 'type_aliases',
+      prompt: '¿Cuáles de los siguientes tipos PUEDE definir un `type` alias pero NO una `interface`?',
+      options: [
+        'Objetos con propiedades',
+        'Tipos primitivos, uniones (`string | number`), tuplas e intersecciones directas',
+        'Métodos y funciones',
+        'Genéricos'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los Type Aliases pueden nombrar directamente primitivos, uniones, tuplas y tipos mapped, mientras que las interfaces solo definen objetos o funciones.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_7',
+      topic: 'type_aliases',
+      prompt: '¿Qué es una Unión Discriminada (Discriminated Union / Tagged Union)?',
+      options: [
+        'Una unión prohibida por TypeScript',
+        'Un patrón donde cada tipo en una unión contiene una propiedad común con un tipo literal único (tag) para facilitar el type narrowing',
+        'Una intersección de arreglos',
+        'Un enum de tipos'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Una unión discriminada utiliza una propiedad común (ej. `kind: "circle" | "square"`) para permitir que TypeScript diferencie los casos unívocamente.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'type_8',
+      topic: 'type_aliases',
+      prompt: 'Dada `type Estado = "pending" | "approved" | "rejected";`, ¿qué tipo de unión es esta?',
+      options: ['Unión Primitiva', 'Unión Literal de Cadenas', 'Unión Discriminada', 'Intersección Objeto'],
+      correctOptionIndex: 1,
+      explanation: 'Es una unión de tipos literales de cadenas (String Literal Union).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_9',
+      topic: 'type_aliases',
+      prompt: '¿Qué resultado se obtiene al cruzar dos tipos incompatibles: `type Imposible = string & number;`?',
+      options: ['any', 'never', 'unknown', 'void'],
+      correctOptionIndex: 1,
+      explanation: 'Un valor no puede ser simultáneamente `string` y `number`, por lo que su intersección resulta en el tipo imposible `never`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_10',
+      topic: 'type_aliases',
+      prompt: '¿Cómo se llama la técnica para verificar que todos los casos de una unión discriminada se hayan manejado en un `switch`?',
+      options: ['Comprobación Exhaustiva (Exhaustiveness Checking)', 'Dead Code Elimination', 'Pattern Matching', 'Switch Guard'],
+      correctOptionIndex: 0,
+      explanation: 'Asignar el caso `default` a una variable de tipo `never` permite que TypeScript asegure que todos los casos han sido cubiertos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'type_11',
+      topic: 'type_aliases',
+      prompt: '¿Es válido crear un Alias de Tipo recursivo como `type Tree<T> = { value: T; children?: Tree<T>[]; };`?',
+      options: [
+        'No, causa un bucle infinito en el compilador',
+        'Sí, TypeScript soporta la recursividad en type aliases',
+        'Solo si se usa una interface',
+        'Solo en TypeScript 5.0+'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los type aliases en TypeScript soportan referencias recursivas para estructuras como árboles y grafos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_12',
+      topic: 'type_aliases',
+      prompt: '¿Qué operador de TypeScript permite extraer el tipo del valor de una variable existente?',
+      options: ['typeof', 'keyof', 'instanceof', 'type'],
+      correctOptionIndex: 0,
+      explanation: 'En el contexto de tipos, `typeof variable` obtiene el tipo estático de una variable en JS.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_13',
+      topic: 'type_aliases',
+      prompt: '¿Qué operador obtiene una unión de las claves de un objeto o interfaz?',
+      options: ['typeof', 'keyof', 'keys', 'indexof'],
+      correctOptionIndex: 1,
+      explanation: '`keyof Type` produce una unión con los nombres de las claves del tipo especificado.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_14',
+      topic: 'type_aliases',
+      prompt: 'Si `type User = { id: number; name: string; }`, ¿qué tipo produce `keyof User`?',
+      options: ['string', '"id" | "name"', 'number | string', '["id", "name"]'],
+      correctOptionIndex: 1,
+      explanation: '`keyof User` devuelve la unión de tipos literales de sus claves: `"id" | "name"`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_15',
+      topic: 'type_aliases',
+      prompt: '¿Qué se obtiene mediante la indexación de tipos: `type IdType = User["id"];`?',
+      options: ['number', 'string', 'User', '"id"'],
+      correctOptionIndex: 0,
+      explanation: 'La indexación de tipos (Indexed Access Types) extrae el tipo de una propiedad específica.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'type_16',
+      topic: 'type_aliases',
+      prompt: '¿Qué ocurre al usar el operador `keyof` con un tipo `any`?',
+      options: ['never', 'string | number | symbol', 'unknown', 'any'],
+      correctOptionIndex: 1,
+      explanation: '`keyof any` produce la unión `string | number | symbol`, que representa cualquier clave de propiedad JavaScript válida.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'type_17',
+      topic: 'type_aliases',
+      prompt: '¿Qué sintaxis permite definir tipos literales de plantillas (Template Literal Types)?',
+      options: [
+        'type Event = `${string}Changed`;',
+        'type Event = "string" + "Changed";',
+        'type Event = Template<string, "Changed">;',
+        'type Event = string.concat("Changed");'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Template Literal Types usan la sintaxis de plantillas de texto de ES6 para construir tipos basados en cadenas.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'type_18',
+      topic: 'type_aliases',
+      prompt: 'Dada `type Rgb = "red" | "green"; type Stat = "on" | "off";`, ¿cuántas variaciones produce `type System = `${Rgb}_${Stat}`;`?',
+      options: ['2', '4 ("red_on" | "red_off" | "green_on" | "green_off")', '0', '8'],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript calcula el producto cartesiano de las uniones involucradas en las plantillas de literales.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'type_19',
+      topic: 'type_aliases',
+      prompt: '¿Existe algún impacto en tiempo de ejecución al usar Type Aliases?',
+      options: [
+        'Sí, crean funciones en JavaScript',
+        'No, al igual que las interfaces, se eliminan por completo al transpilar (Type Erasure)',
+        'Aumentan el tamaño del bundle JS final',
+        'Hacen la ejecución más lenta'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los Alias de Tipo no producen ningún código ejecutable en JS.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'type_20',
+      topic: 'type_aliases',
+      prompt: '¿Cuándo deberías preferir `type` sobre `interface` según las recomendaciones generales?',
+      options: [
+        'Siempre',
+        'Cuando necesites definir uniones, tuplas, primitivos o combinaciones complejas que no sean objetos simples',
+        'Solo al trabajar con React',
+        'Nunca, interface es siempre mejor'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`type` es la opción adecuada para uniones, tuplas, alianzas de primitivos o transformaciones de tipos avanzadas.',
+      difficulty: 'medium',
+    },
+  ],
+
+  enums: [
+    {
+      id: 'enum_1',
+      topic: 'enums',
+      prompt: '¿Qué palabra clave se usa en TypeScript para definir un conjunto de constantes con nombre?',
+      options: ['enum', 'struct', 'const group', 'dictionary'],
+      correctOptionIndex: 0,
+      explanation: '`enum` se utiliza para definir enumeraciones de valores constantes.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_2',
+      topic: 'enums',
+      prompt: 'Por defecto en un Enum Numérico como `enum Direction { Up, Down, Left, Right }`, ¿cuál es el valor asignado a `Direction.Up`?',
+      options: ['1', '0', '"Up"', 'undefined'],
+      correctOptionIndex: 1,
+      explanation: 'Los enums numéricos no inicializados comienzan automáticamente en `0`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_3',
+      topic: 'enums',
+      prompt: 'En el enum anterior `enum Direction { Up, Down, Left, Right }`, ¿cuál es el valor de `Direction.Left`?',
+      options: ['3', '2', '1', '0'],
+      correctOptionIndex: 1,
+      explanation: 'Los siguientes miembros se incrementan autoincrementalmente de 1 en 1 (`Up=0, Down=1, Left=2, Right=3`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_4',
+      topic: 'enums',
+      prompt: '¿Cómo declaras un Enum de Cadenas de Texto (String Enum)?',
+      options: [
+        'enum Roles { Admin = "ADMIN", User = "USER" }',
+        'enum Roles { "ADMIN", "USER" }',
+        'string enum Roles { Admin, User }',
+        'enum Roles<string> { Admin, User }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Cada miembro en un string enum debe ser inicializado explícitamente con un literal de cadena.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_5',
+      topic: 'enums',
+      prompt: '¿Qué es el Mapeo Inverso (Reverse Mapping) en los Enums Numéricos?',
+      options: [
+        'Poder obtener el nombre del enum a partir de su valor numérico: `Direction[0]` devuelve `"Up"`',
+        'Invertir el orden de los elementos',
+        'Convertir el enum a minúsculas',
+        'No existe tal característica'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los enums numéricos generan un objeto JavaScript que permite la búsqueda inversa de clave por valor numérico.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_6',
+      topic: 'enums',
+      prompt: '¿Tienen los Enums de Cadenas (String Enums) Mapeo Inverso automático?',
+      options: [
+        'Sí, exactamente igual que los numéricos',
+        'No, los string enums NO generan mapeo inverso en JavaScript',
+        'Solo si se usa la opción `reverse: true`',
+        'Solo en modo estricto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los string enums no soportan mapeo inverso para evitar sobrecarga en el código emitido.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_7',
+      topic: 'enums',
+      prompt: '¿Qué ocurre al compilar un `const enum` como `const enum Size { Small, Medium }`?',
+      options: [
+        'Se genera un objeto `Size` normal en JS',
+        'Se inlinean directamente los valores numéricos/literales en el código compilado y NO se emite ningún objeto en JS',
+        'Se lanza un error si no es una cadena',
+        'Se convierte en un type alias'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`const enum` inlinea completamente sus miembros donde se usan, reduciendo el código JS resultante a cero objetos extra.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_8',
+      topic: 'enums',
+      prompt: '¿Cuál es una desventaja de los `const enum` al usarse con herramientas como Babel o aisladamente por archivo (isolatedModules)?',
+      options: [
+        'Son más lentos en ejecución',
+        'Pueden causar problemas al no tener acceso a la definición de otros módulos sin un compilador completo de TS',
+        'No permiten números',
+        'No funcionan con `const`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Herramientas de transpilación archivo por archivo como Babel pueden tener dificultades para inlinear `const enum` importados.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_9',
+      topic: 'enums',
+      prompt: 'Si declaras `enum Status { Active = 1, Inactive = 5, Pending }`, ¿cuál es el valor de `Status.Pending`?',
+      options: ['2', '6', '0', '5'],
+      correctOptionIndex: 1,
+      explanation: 'El valor autoincremental continúa a partir del valor del miembro anterior (5 + 1 = 6).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_10',
+      topic: 'enums',
+      prompt: '¿Qué es un Enum Heterogéneo?',
+      options: [
+        'Un enum que mezcla miembros numéricos y de cadena de texto',
+        'Un enum que cambia en tiempo de ejecución',
+        'Un enum sin nombres',
+        'Un enum de diferentes módulos'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Aunque generalmente no se recomienda, TypeScript permite mezclar miembros numéricos y strings en el mismo enum.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_11',
+      topic: 'enums',
+      prompt: '¿Existe la construcción `enum` nativamente en el estándar JavaScript de ES6?',
+      options: [
+        'Sí, desde ES6',
+        'No, `enum` es una extensión de sintaxis propia de TypeScript que compila a objetos en JS',
+        'Sí, añadida en ES2022',
+        'Solo en navegadores Firefox'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los enums son una de las pocas características de TypeScript que no provienen del estándar JS nativo y emiten código JS propio.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_12',
+      topic: 'enums',
+      prompt: '¿Cuál es una alternativa común y moderna a los `enum` utilizando objetos puros y `as const`?',
+      options: [
+        'const Direction = { Up: 0, Down: 1 } as const; type Direction = typeof Direction[keyof typeof Direction];',
+        'let Direction = ["Up", "Down"];',
+        'type Direction = enum("Up", "Down");',
+        'No existen alternativas'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Usar objetos con `as const` junto a un tipo derivado es una alternativa popular que evita los problemas de emisión de código de los enums.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_13',
+      topic: 'enums',
+      prompt: '¿Cómo se asignan expresiones calculadas en un miembro de enum numérico?',
+      options: [
+        'enum Flags { Read = 1 << 0, Write = 1 << 1 }',
+        'enum Flags { Read = calc(), Write = calc2() }',
+        'Ambas son válidas para enums numéricos',
+        'No se pueden usar expresiones calculadas'
+      ],
+      correctOptionIndex: 2,
+      explanation: 'Los enums numéricos permiten valores constantes calculados o invocaciones de funciones como asignaciones.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_14',
+      topic: 'enums',
+      prompt: '¿Se pueden usar valores calculados en miembros de un `const enum`?',
+      options: [
+        'Sí, cualquier función',
+        'No, los miembros de un `const enum` solo pueden tener expresiones constantes evaluables en compilación',
+        'Solo si devuelven string',
+        'Solo con operaciones matemáticas simples'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`const enum` exige valores que la fase de compilación pueda inlinear directamente como literales.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_15',
+      topic: 'enums',
+      prompt: '¿Qué sucede si intentas reasignar un miembro de enum como `Direction.Up = 10;` en tiempo de ejecución?',
+      options: [
+        'Funciona normalmente',
+        'Error de compilación porque los miembros de enum son de solo lectura',
+        'Se duplica el enum',
+        'El programa se reinicia'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los miembros de las enumeraciones son tratados como de solo lectura por TypeScript.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'enum_16',
+      topic: 'enums',
+      prompt: '¿Por qué los String Enums son a menudo preferidos sobre los Enums Numéricos para debugging?',
+      options: [
+        'Son más rápidos',
+        'En los logs e inspecciones en runtime se lee la cadena descriptiva en lugar de un número opaco como 0 o 1',
+        'Ocupan menos espacio',
+        'Son inmutables por defecto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Al imprimir un string enum en consola o en base de datos, se conserva la cadena legible `"ADMIN"` en lugar de un número indeterminado `0`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_17',
+      topic: 'enums',
+      prompt: '¿Cuál es el tipo de una variable que recibe `let val = Direction.Up;`?',
+      options: ['number', 'Direction', 'Direction.Up', 'string'],
+      correctOptionIndex: 1,
+      explanation: 'El tipo inferido/asignado es el enum `Direction` (o el enum member en contextos estrechos).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_18',
+      topic: 'enums',
+      prompt: '¿Qué valor compila un string enum como `enum Color { Red = "RED" }` en JavaScript?',
+      options: [
+        'Un objeto JS simple: `{ Red: "RED" }`',
+        'Un arreglo: `["RED"]`',
+        'Un mapa con la clave `"RED": "Red"`',
+        'No compila nada'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los string enums compilan a un objeto JS con pares clave-valor simples.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'enum_19',
+      topic: 'enums',
+      prompt: '¿En qué caso TypeScript permite pasar un número arbitrario fuera de rango a una función que espera un Enum Numérico?',
+      options: [
+        'Nunca',
+        'Por razones históricas de bitwise flags, TypeScript permite asignar números enteros arbitrarios a enums numéricos sin error si no está `isolatedModules` o ciertos flags estrictos',
+        'Solo si el número es negativo',
+        'Solo en funciones de React'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Debido al soporte para operaciones a nivel de bits (bitwise), los enums numéricos aceptan asignaciones numéricas abiertas en varias configuraciones.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'enum_20',
+      topic: 'enums',
+      prompt: '¿Cómo puedes iterar sobre las CLAVES de un enum `Direction` usando JavaScript?',
+      options: ['Object.keys(Direction)', 'Direction.map()', 'for (let d in Direction)', 'Ambas A y C'],
+      correctOptionIndex: 3,
+      explanation: 'Dado que los enums emiten objetos JavaScript en runtime, `Object.keys(Direction)` o bucles `for...in` funcionan para recorrerlos.',
+      difficulty: 'medium',
+    },
+  ],
+
+  // --- SECCIÓN 3: FUNCIONES ---
+  tipado_funciones: [
+    {
+      id: 'fn_1',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo declaras explícitamente los tipos de parámetros y de retorno en una función `sumar`?',
+      options: [
+        'function sumar(a: number, b: number): number { return a + b; }',
+        'function sumar(a, b): number { return a + b; }',
+        'number function sumar(a: number, b: number) { return a + b; }',
+        'function sumar(a: number, b: number) => number { return a + b; }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los tipos de parámetros van tras dos puntos en cada argumento, y el retorno va tras el paréntesis de cierre `): number`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_2',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo declaras un parámetro opcional en una función?',
+      options: [
+        'function saludar(nombre?: string) {}',
+        'function saludar(optional nombre: string) {}',
+        'function saludar(nombre: string = null) {}',
+        'function saludar(nombre: optional string) {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El signo de interrogación `?` tras el nombre del parámetro indica que es opcional (su tipo será `string | undefined`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_3',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué ocurre si un parámetro tiene un valor por defecto como `function fn(x = 10)`?',
+      options: [
+        'TypeScript exige colocar `: number`',
+        'TypeScript infiere automáticamente el tipo `number` para `x`',
+        '`x` se convierte en tipo `any`',
+        'Genera un error de sintaxis'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Al proporcionar un valor por defecto, TypeScript infiere automáticamente el tipo del parámetro basándose en ese valor.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_4',
+      topic: 'tipado_funciones',
+      prompt: '¿Pueden los parámetros opcionales ir ANTES de los parámetros obligatorios en la firma de una función?',
+      options: [
+        'Sí, sin problemas',
+        'No, los parámetros opcionales deben ubicarse al final tras los obligatorios',
+        'Solo si usan `undefined` explícito',
+        'Solo en funciones flecha'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Los parámetros requeridos deben ir siempre antes de los parámetros opcionales.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_5',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo se tipan los parámetros rest (Rest Parameters) que reciben múltiples argumentos?',
+      options: [
+        'function fn(...nums: number[]) {}',
+        'function fn(rest nums: number) {}',
+        'function fn(...nums: Array) {}',
+        'function fn(nums...: number[]) {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los parámetros rest utilizan los puntos suspensivos `...` y su tipo DEBE ser un tipo de arreglo o tupla.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_6',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué tipo de retorno infiere TypeScript para una función que no tiene una sentencia `return`?',
+      options: ['undefined', 'null', 'void', 'never'],
+      correctOptionIndex: 2,
+      explanation: 'TypeScript infiere `void` como tipo de retorno cuando no hay retorno explícito de valor.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_7',
+      topic: 'tipado_funciones',
+      prompt: '¿Cuál es el tipo de una función asignada a una variable: `const miFn: (a: number) => string;`?',
+      options: ['Un tipo de objeto', 'Un tipo de función (Function Type Signature)', 'Una interfaz de clase', 'Una función constructora'],
+      correctOptionIndex: 1,
+      explanation: 'La sintaxis `(params) => returnType` define un tipo de función.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_8',
+      topic: 'tipado_funciones',
+      prompt: 'Con `noImplicitReturns: true`, ¿qué ocurre si una función retorna un valor en una rama `if` pero nada en el `else`?',
+      options: [
+        'Retorna `undefined` sin problema',
+        'TypeScript lanza un error indicando que no todas las rutas de código retornan un valor',
+        'Se añade `return null` automáticamente',
+        'Se convierte en `any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`noImplicitReturns` garantiza que todas las ramas lógicas de una función retornen explícitamente un valor.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_9',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué es el estrechamiento de tipos (Type Narrowing) dentro del cuerpo de una función?',
+      options: [
+        'Reducir el tamaño de las funciones',
+        'El proceso por el cual TypeScript deduce un tipo más específico dentro de un bloque condicional (ej. mediante `typeof`)',
+        'Eliminar parámetros',
+        'Convertir todos los tipos a `never`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Type Narrowing permite a TypeScript refinar tipos anchos a tipos más específicos basándose en comprobaciones en runtime.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_10',
+      topic: 'tipado_funciones',
+      prompt: '¿Cuál de las siguientes comprobaciones activa el Type Narrowing automáticamente?',
+      options: ['`typeof x === "string"`', '`x instanceof Date`', '`"prop" in objeto`', 'Todas las anteriores'],
+      correctOptionIndex: 3,
+      explanation: 'TypeScript reconoce `typeof`, `instanceof` y el operador `in` como Type Guards válidos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_11',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué es un Predicado de Tipo (Custom Type Guard)?',
+      options: [
+        'Una función cuyo tipo de retorno es de la forma `param is Tipo`',
+        'Un decorador de seguridad',
+        'Una función que siempre retorna un booleano sin tipos',
+        'Una instrucción de tsconfig'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Un predicado de tipo (`pet is Dog`) le indica al compilador que si la función retorna `true`, la variable probada es de ese tipo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'fn_12',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo declaras una función cuyo parámetro de retorno es un Predicado de Tipo para verificar si un objeto es un `Usuario`?',
+      options: [
+        'function esUsuario(obj: any): obj is Usuario { ... }',
+        'function esUsuario(obj: any): boolean<Usuario> { ... }',
+        'function esUsuario(obj: any): Usuario { ... }',
+        'function esUsuario(obj: any): Check<Usuario> { ... }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis de tipo de retorno `obj is Usuario` convierte a la función en un Type Guard personalizado.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'fn_13',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué hace la afirmación de tipo de función `asserts condition` (Assertion Functions)?',
+      options: [
+        'Afirma que la función lanza un error si la condición es falsa, permitiendo al compilador estrechar tipos después de la llamada',
+        'Es sinónimo de console.assert',
+        'Solo funciona en pruebas unitarias',
+        'Convierte los tipos a string'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las Assertion Functions (`asserts val is string`) informan a TS que si la función no lanza una excepción, el tipo queda estrechado para las líneas subsiguientes.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'fn_14',
+      topic: 'tipado_funciones',
+      prompt: '¿Cuál es el tipo por defecto de los parámetros de una función sin anotación cuando `noImplicitAny: true` está activo?',
+      options: [
+        'Genera un error de compilación por `any` implícito',
+        'Se asigna `unknown`',
+        'Se asigna `void`',
+        'Se infiere como `never`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Con `noImplicitAny: true`, TypeScript exige especificar tipos en los parámetros si no se pueden inferir.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_15',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo se asigna un parámetro con destructuración y tipos explícitos?',
+      options: [
+        'function fn({ name, age }: { name: string; age: number }) {}',
+        'function fn({ name: string, age: number }) {}',
+        'function fn({ name, age }: string, number) {}',
+        'function fn({ name: string }, { age: number }) {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El tipo del objeto desestructurado va después de todo el patrón de desestructuración: `({ x, y }: { x: number; y: number })`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'fn_16',
+      topic: 'tipado_funciones',
+      prompt: '¿Por qué `function fn({ name: string })` NO funciona como anotación de tipo?',
+      options: [
+        'Porque en JS la sintaxis `: string` en desestructuración renombra la propiedad `name` a una variable local llamada `string`',
+        'Porque `string` es una palabra reservada',
+        'Porque falta el `const`',
+        'Solo funciona en objetos globales'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'En sintaxis ES6 de desestructuración, `{ prop: nuevoNombre }` renombra la variable, lo que entra en conflicto si intentas usarlo como tipo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'fn_17',
+      topic: 'tipado_funciones',
+      prompt: '¿Se puede declarar el tipo del contexto `this` dentro de una función?',
+      options: [
+        'No, `this` es dinámico e imposible de tipar',
+        'Sí, añadiendo un falso primer parámetro llamado `this`: `function fn(this: MiTipo, arg1: number)`',
+        'Solo usando clases',
+        'Usando el prefijo `@this`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript permite incluir `this` como el primer parámetro ficticio para tipar el contexto en el que se ejecuta la función.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'fn_18',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué es una función de orden superior (Higher-Order Function)?',
+      options: [
+        'Una función que se ejecuta con privilegios de administrador',
+        'Una función que recibe otra función como argumento o devuelve una función',
+        'Una función de más de 100 líneas',
+        'Una función asíncrona'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones de orden superior son aquellas que operan sobre otras funciones recibiéndolas como parámetros o retornándolas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_19',
+      topic: 'tipado_funciones',
+      prompt: '¿Qué tipo de retorno tiene una función declarada con `async`?',
+      options: [
+        'Devuelve directamente el tipo inferido dentro del return',
+        'Siempre devuelve una `Promise<T>`',
+        'Devuelve `void`',
+        'Devuelve `async<T>`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Toda función marcada con `async` envuelve automáticamente su valor de retorno dentro de una Promesa (`Promise<T>`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'fn_20',
+      topic: 'tipado_funciones',
+      prompt: '¿Cómo tipas la función `sumar` usando la palabra clave `type`?',
+      options: [
+        'type SumarFn = (a: number, b: number) => number;',
+        'type SumarFn = function(a: number, b: number): number;',
+        'type SumarFn = (a: number, b: number): number;',
+        'type SumarFn = Function<number>;'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis de tipo de función utiliza la flecha `=>` para indicar el retorno: `(args) => ReturnType`.',
+      difficulty: 'easy',
+    },
+  ],
+
+  funciones_flecha: [
+    {
+      id: 'flecha_1',
+      topic: 'funciones_flecha',
+      prompt: '¿Cuál es la sintaxis básica de una función flecha con anotación de tipos en TypeScript?',
+      options: [
+        'const sumar = (a: number, b: number): number => a + b;',
+        'const sumar = (a: number, b: number) -> number => a + b;',
+        'const sumar = function(a: number, b: number) => number;',
+        'const sumar => (a: number, b: number): number { return a + b; };'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las funciones flecha colocan el tipo de retorno después de los parámetros y antes de `=>`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'flecha_2',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo se comportan las funciones flecha respecto al enlace de `this`?',
+      options: [
+        'Tienen su propio `this` dinámico',
+        'Heredan el `this` de su ámbito léxico circundante en el momento de ser creadas',
+        '`this` siempre es `null`',
+        '`this` apunta a la función misma'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones flecha no tienen su propio `this`; conservan el contexto de `this` del ámbito donde fueron definidas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_3',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo retornas directamente un literal de objeto sin cuerpo de bloque en una función flecha?',
+      options: [
+        'const makeObj = () => { name: "Ana" };',
+        'const makeObj = () => ({ name: "Ana" });',
+        'const makeObj = () => return { name: "Ana" };',
+        'const makeObj = () => Object({ name: "Ana" });'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Para retornar un objeto implícitamente, se debe envolver entre paréntesis `({ key: val })` para evitar que las llaves sean interpretadas como el bloque de la función.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_4',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué es una función callback?',
+      options: [
+        'Una función que se llama automáticamente al fallar el código',
+        'Una función que se pasa a otra como argumento para ser ejecutada más tarde',
+        'Una función que se llama a sí misma de forma recursiva',
+        'Una función almacenada en la base de datos'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Un callback es una función pasada a otra función como parámetro que se invoca para completar algún proceso.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'flecha_5',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo tipas un callback en un parámetro como `procesarDatos`?',
+      options: [
+        'function procesar(onSuccess: (resultado: string) => void) {}',
+        'function procesar(onSuccess: Callback<string>) {}',
+        'function procesar(onSuccess: Function) {}',
+        'function procesar(onSuccess: string => void) {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Especificar la firma explicita `(resultado: string) => void` es la forma segura y adecuada de tipar callbacks.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_6',
+      topic: 'funciones_flecha',
+      prompt: '¿Por qué se considera desaconsejado usar el tipo genérico `Function` en TypeScript?',
+      options: [
+        'Porque desactiva la verificación de tipos al permitir llamar a la función con cualquier argumento y retornar `any`',
+        'Porque no compila en JS',
+        'Porque es más lento',
+        'Porque solo funciona en navegadores viejos'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El tipo `Function` es untyped (acepta cualquier función sin validar parámetros ni retornos), por lo que se prefiere definir firmas específicas `() => void`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_7',
+      topic: 'funciones_flecha',
+      prompt: '¿Pueden las funciones flecha ser usadas como constructores con el operador `new`?',
+      options: [
+        'Sí, igual que las funciones normales',
+        'No, las funciones flecha no tienen prototipo ni método interno `[[Construct]]` y lanzarán un TypeError',
+        'Solo si devuelven un objeto',
+        'Solo en modo estricto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones flecha no poseen `prototype` y no se pueden instanciar con `new`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_8',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo se aplica un parámetro genérico en una función flecha en archivo `.tsx` de React?',
+      options: [
+        'const id = <T>(x: T) => x;',
+        'const id = <T,>(x: T) => x; (o con extends: <T extends unknown>)',
+        'const id = T => (x: T) => x;',
+        'const id = <generic T>(x: T) => x;'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'En archivos JSX/TSX, `<T>` se confunde con una etiqueta HTML, por lo que se debe escribir `<T,>` o `<T extends unknown>` para evitar ambigüedad.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'flecha_9',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué es el Currying en programación funcional?',
+      options: [
+        'Una técnica para transformar una función que recibe múltiples argumentos en una secuencia de funciones que reciben un solo argumento',
+        'Una forma de acelerar la ejecución de arreglos',
+        'Un tipo de error de sintaxis',
+        'Convertir objetos a JSON'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Currying convierte `fn(a, b)` en `fn(a)(b)`, permitiendo aplicación parcial de argumentos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'flecha_10',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo se tipa una función currificada en TypeScript: `const sumar = (a: number) => (b: number): number => a + b;`?',
+      options: [
+        'TypeScript la infiere automáticamente como `(a: number) => (b: number) => number`',
+        'Requiere tres interfaces intermedias',
+        'No se puede tipar',
+        'Es invalida en TypeScript'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'TypeScript infiere limpiamente los tipos de funciones anidadas que retornan otras funciones.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_11',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué ocurre con la palabra clave `arguments` dentro de una función flecha?',
+      options: [
+        'Contiene los argumentos de la función flecha',
+        'No existe en funciones flecha (hace referencia al objeto `arguments` del ámbito padre si lo hay)',
+        'Devuelve un arreglo vacío',
+        'Genera un error de sintaxis'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones flecha no disponen del objeto `arguments`. Se deben usar parámetros rest (`...args`) en su lugar.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_12',
+      topic: 'funciones_flecha',
+      prompt: '¿Cuál es la diferencia entre un callback sincrónico y uno asincrónico?',
+      options: [
+        'El sincrónico se ejecuta inmediatamente durante la llamada de la función padre, el asincrónico se ejecuta más tarde (event loop)',
+        'No hay diferencia',
+        'El asincrónico no puede recibir parámetros',
+        'El sincrónico requiere Promises'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los callbacks sincrónicos (como los de `.map()`) se ejecutan en el hilo principal sin diferirse al bucle de eventos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'flecha_13',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué tipo de retorno debe tener un callback pasado a `.addEventListener("click", callback)`?',
+      options: ['boolean', 'void (o any, ya que su valor retornado es ignorado por el evento)', 'string', 'Promise<boolean>'],
+      correctOptionIndex: 1,
+      explanation: 'Los Event Listeners ignoran el valor de retorno, por lo que el tipo de callback suele ser `(e: Event) => void`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_14',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué significa que las firmas de callbacks sean contravariantes en sus parámetros bajo `strictFunctionTypes`?',
+      options: [
+        'Que no aceptan parámetros',
+        'Que puedes pasar una función que acepte tipos más generales/amplios en lugar de tipos más estrechos',
+        'Que deben ser funciones flecha',
+        'Que solo aceptan `any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La contravarianza de parámetros significa que una función que acepta supertipos es segura para usarse donde se espera que acepte subtipos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'flecha_15',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo declaras una propiedad de método como función flecha dentro de una clase para evitar perder el binding de `this`?',
+      options: [
+        'miMetodo = () => { console.log(this); };',
+        'function miMetodo = () => {};',
+        'miMetodo(): arrow => {};',
+        'bind miMetodo() {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Declarar un método de clase como una propiedad asignada a una función flecha garantiza que `this` se mantenga unido a la instancia.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_16',
+      topic: 'funciones_flecha',
+      prompt: '¿Cuál es la desventaja de usar propiedades asignadas a funciones flecha en clases frente a métodos normales de prototipo?',
+      options: [
+        'Se ejecutan más lento',
+        'Cada instancia crea una nueva copia de la función en memoria en lugar de compartirla en el `.prototype`',
+        'No pueden acceder a atributos privados',
+        'No pueden usar `return`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones flecha en clases se crean como campos de instancia en cada objeto creado, consumiendo más memoria.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'flecha_17',
+      topic: 'funciones_flecha',
+      prompt: '¿Qué utilidad tiene la palabra clave `void` como tipo de retorno en una firma de callback `(x: string) => void`?',
+      options: [
+        'Exige que la función retorne obligatoriamente `undefined`',
+        'Indica al caller que IGNORE cualquier valor que la función de callback pudiera retornar',
+        'Lanza un error si la función retorna algo',
+        'Hace la función asíncrona'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'En firmas de callback, `void` no significa "debe no retornar nada", sino "el valor devuelto no será usado".',
+      difficulty: 'hard',
+    },
+    {
+      id: 'flecha_18',
+      topic: 'funciones_flecha',
+      prompt: '¿Cuál es la salida de `[1, 2, 3].map(x => x * 2)`?',
+      options: ['[2, 4, 6]', '6', '[1, 2, 3]', 'undefined'],
+      correctOptionIndex: 0,
+      explanation: 'La función flecha se aplica a cada número del arreglo devolviendo el doble de cada uno.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'flecha_19',
+      topic: 'funciones_flecha',
+      prompt: '¿Cómo declaras una función flecha inmediatamente invocada (IIFE) en TypeScript?',
+      options: [
+        '((x: number) => { console.log(x); })(10);',
+        'function() => {}(10);',
+        'IIFE(() => {});',
+        'new ArrowFunction()();'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Envolver la función flecha entre paréntesis y añadir `()` al final la ejecuta inmediatamente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'flecha_20',
+      topic: 'funciones_flecha',
+      prompt: '¿Se pueden usar firmas de sobrecarga (Overloads) directamente en funciones flecha?',
+      options: [
+        'Sí, exactamente igual que en funciones tradicionales',
+        'No directamente en la sintaxis flecha; se debe definir un tipo de función con múltiples firmas primero y luego asignarlo a la constante flecha',
+        'Solo usando la palabra `overload`',
+        'No es posible sobrecargar nada en TypeScript'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las funciones flecha no soportan la sintaxis de sobrecarga consecutiva directamente, sino mediante la definición previa de un tipo o interfaz de función sobrecargada.',
+      difficulty: 'hard',
+    },
+  ],
+
+  sobrecarga_funciones: [
+    {
+      id: 'over_1',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Qué es la Sobrecarga de Funciones (Function Overloading) en TypeScript?',
+      options: [
+        'Llamar a una función demasiadas veces',
+        'Definir múltiples firmas de tipo para una misma función, permitiendo responder con diferentes tipos según los argumentos pasados',
+        'Crear funciones con más de 10 parámetros',
+        'Sobrescribir funciones de una clase padre'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La sobrecarga permite declarar múltiples firmas públicas para una función, seguidas por una única implementación compatible.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_2',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Cuántas implementaciones físicas reales en código JavaScript puede tener una función sobrecargada?',
+      options: [
+        'Una por cada firma de sobrecarga',
+        'Exactamente una única implementación que maneja todos los casos',
+        'Cualquier cantidad',
+        'Ninguna, TypeScript las borra'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'En el código compilado a JS solo existe UNA implementación. Las sobrecargas son solo declaraciones de tipo preliminares.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_3',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Dónde deben ubicarse las firmas de sobrecarga con respecto a la firma de implementación?',
+      options: [
+        'Después de la implementación',
+        'Inmediatamente antes de la firma e implementación real de la función',
+        'En un archivo separado',
+        'En una interfaz obligatoriamente'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las firmas de sobrecarga se colocan en líneas consecutivas inmediatamente antes de la función de implementación.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_4',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Es la firma de la implementación (la última) visible directamente para quienes llaman a la función?',
+      options: [
+        'Sí, siempre es visible',
+        'No, solo las firmas de sobrecarga son visibles externamente para el chequeo de tipos',
+        'Solo si es pública',
+        'Solo en tiempo de ejecución'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La firma de la implementación NO es visible desde el exterior; TypeScript solo expone las firmas de sobrecarga declaradas arriba de ella.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'over_5',
+      topic: 'sobrecarga_funciones',
+      prompt: 'Dada:\n`function fn(x: string): string;`\n`function fn(x: number): number;`\n`function fn(x: any): any { return x; }`\n¿Qué tipo devuelve `fn("hola")`?',
+      options: ['any', 'string', 'number', 'unknown'],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript resuelve coincidiendo con la primera firma compatible, en este caso la primera que recibe `string` y devuelve `string`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_6',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Cómo evalúa TypeScript las firmas de sobrecarga para encontrar una coincidencia?',
+      options: [
+        'En orden aleatorio',
+        'En el orden secuencial en el que fueron declaradas de arriba a abajo',
+        'De la más específica a la menos específica automáticamente',
+        'Por orden alfabético'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript prueba las firmas de sobrecarga secuencialmente en el orden exacto en que están escritas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_7',
+      topic: 'sobrecarga_funciones',
+      prompt: 'Por esa razón del orden, ¿dónde deben colocarse las sobrecargas más específicas?',
+      options: [
+        'Al final',
+        'Al inicio (arriba), antes de las sobrecargas más generales',
+        'En el centro',
+        'El orden no importa'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las sobrecargas más específicas deben ir primero para evitar que una sobrecarga general coincida prematuramente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_8',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Qué ocurre si la firma de implementación no es lo suficientemente amplia para cubrir todas las sobrecargas?',
+      options: [
+        'Se compila igual',
+        'TypeScript genera un error de compilación indicando que la implementación no es compatible con la sobrecarga',
+        'Se corrige automáticamente',
+        'Convierte la función a `void`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El tipo de los parámetros y retorno de la implementación debe ser un supertipo capaz de abarcar todas las firmas declaradas arriba.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_9',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Se pueden usar tipos de Unión en lugar de sobrecarga de funciones cuando la relación entrada-salida es simple?',
+      options: [
+        'Sí, y a menudo es más simple y preferido (ej: `fn(x: string | number): void`)',
+        'No, la sobrecarga siempre es obligatoria',
+        'Solo si se usa `any`',
+        'Solo en clases'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Si los tipos de retorno no cambian según los tipos de entrada, se prefiere usar union tipos en lugar de sobrecargas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_10',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Cuándo es ESENCIAL usar sobrecarga de funciones en lugar de una unión simple?',
+      options: [
+        'Cuando el tipo de retorno de la función depende estrictamente del tipo de argumento ingresado',
+        'Cuando la función no recibe parámetros',
+        'Cuando la función es asíncrona',
+        'Nunca'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La sobrecarga es crucial cuando ingresar un `string` garantiza un retorno `number`, pero ingresar un `boolean` garantiza un retorno `string`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_11',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Se pueden sobrecargar métodos de clases además de funciones independientes?',
+      options: [
+        'Sí, la sintaxis es idéntica dentro de la definición de la clase',
+        'No, solo funciones independientes',
+        'Solo constructores',
+        'Solo en interfaces'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los métodos de clase y constructores también admiten firmas de sobrecarga.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_12',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Pueden los constructores de clase tener firmas de sobrecarga?',
+      options: [
+        'Sí, permitiendo instanciar el objeto de diferentes formas',
+        'No, solo puede haber un único constructor',
+        'Solo si la clase no tiene propiedades',
+        'Solo usando `static`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los constructores permiten declarar firmas de sobrecarga antes de la implementación del `constructor()`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_13',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Qué pasa al llamar a una función sobrecargada con un valor de tipo unión `let arg: string | number; fn(arg);` si las sobrecargas solo aceptan `fn(x: string)` y `fn(x: number)` por separado?',
+      options: [
+        'Funciona perfectamente',
+        'TypeScript puede dar un error si ninguna sobrecarga individual acepta la unión `string | number` directamente',
+        'Se resuelve en tiempo de ejecución',
+        'Lanza un warning'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript evalúa llamadas a sobrecargas individualmente; si pasas un tipo unión no manejado por una sola firma, fallará a menos que exista una sobrecarga que acepte la unión.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'over_14',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Cómo solucionas el problema anterior?',
+      options: [
+        'Añadiendo una sobrecarga que acepte la unión o mediante Type Narrowing en el argumento antes de invocar la función',
+        'Eliminando las sobrecargas',
+        'Usando `const`',
+        'Usando `void`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Estrechar la variable antes de llamar o agregar una firma explícita para la unión soluciona la restricción.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'over_15',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Qué ventaja tienen los Genéricos con Condicionales frente a múltiples firmas de Sobrecarga?',
+      options: [
+        'Pueden reemplazar múltiples sobrecargas en una sola firma elegante: `fn<T extends string | number>(x: T): T extends string ? number : string`',
+        'Ninguna',
+        'Generan menos JS',
+        'Evitan el uso de funciones'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los tipos condicionales genéricos permiten modelar relaciones complejas de entrada-salida sin declarar múltiples firmas de sobrecarga.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'over_16',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Se emiten las firmas de sobrecarga en el archivo JavaScript compilado?',
+      options: [
+        'Sí, como comentarios',
+        'No, son completamente removidas; solo la implementación permanece',
+        'Se convierten en sentencias `if`',
+        'Se convierten en un switch'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Al ser constructos puramente de tipos, las firmas de sobrecarga desaparecen en el JS compilado.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_17',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Qué sucede si una firma de sobrecarga difiere solo en el nombre de los parámetros pero no en sus tipos?',
+      options: [
+        'Es válida y útil',
+        'TypeScript marcará la firma como duplicada o redundante',
+        'Falla la aplicación',
+        'Renombra la función'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Cambiar únicamente el nombre del parámetro sin alterar el tipo produce firmas equivalentes redundantes.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_18',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Pueden las firmas de sobrecarga tener diferente número de parámetros?',
+      options: [
+        'Sí, por ejemplo una firma acepta 1 parámetro y otra acepta 3',
+        'No, deben tener siempre la misma cantidad',
+        'Solo si todos son opcionales',
+        'Solo con `any`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las firmas pueden variar tanto en tipos como en la cantidad de parámetros.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'over_19',
+      topic: 'sobrecarga_funciones',
+      prompt: 'Si una sobrecarga tiene 2 parámetros y otra tiene 3, ¿cómo debe ser la firma de la implementación?',
+      options: [
+        'Debe tener 3 parámetros donde el tercero sea opcional (o rest): `(a: any, b: any, c?: any)`',
+        'Debe tener exactamente 2 parámetros',
+        'Debe tener 5 parámetros',
+        'No importa'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La firma de la implementación debe ser capaz de ser invocada con cualquier número de argumentos permitido por las sobrecargas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'over_20',
+      topic: 'sobrecarga_funciones',
+      prompt: '¿Cuál es la regla de oro para redactar sobrecargas de funciones según la documentación de TypeScript?',
+      options: [
+        'Escribir tantas sobrecargas como sea posible',
+        'Preferir siempre parámetros con tipos de unión cuando sea posible antes que recurrir a la sobrecarga',
+        'Evitar sobrecargar funciones de más de 1 parámetro',
+        'Usar `any` en todas las sobrecargas'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'La guía oficial aconseja usar tipos de unión en lugar de sobrecargas siempre que los tipos de retorno no dependan de los parámetros.',
+      difficulty: 'medium',
+    },
+  ],
+
+  // --- SECCIÓN 4: PROGRAMACIÓN ORIENTADA A OBJETOS (POO) ---
+  clases_constructores: [
+    {
+      id: 'cls_1',
+      topic: 'clases_constructores',
+      prompt: '¿Qué palabra clave define una Clase en TypeScript?',
+      options: ['class', 'struct', 'object', 'type'],
+      correctOptionIndex: 0,
+      explanation: '`class` se utiliza para definir clases en ES6 / TypeScript.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_2',
+      topic: 'clases_constructores',
+      prompt: '¿Cuál es el nombre especial del método usado para instanciar e inicializar objetos dentro de una clase?',
+      options: ['init', 'create', 'constructor', 'main'],
+      correctOptionIndex: 2,
+      explanation: '`constructor` es el método especial llamado automáticamente al ejecutar `new MiClase()`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_3',
+      topic: 'clases_constructores',
+      prompt: '¿Cómo instancias un nuevo objeto de la clase `Persona`?',
+      options: ['let p = Persona();', 'let p = new Persona();', 'let p = create Persona;', 'let p = Persona.new();'],
+      correctOptionIndex: 1,
+      explanation: 'El operador `new` invoca al constructor para crear una nueva instancia.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_4',
+      topic: 'clases_constructores',
+      prompt: '¿Qué es la sintaxis de "Propiedades de Parámetro" (Parameter Properties) en un constructor?',
+      options: [
+        'Una forma abreviada de declarar e inicializar miembros de clase directamente desde los argumentos del constructor usando modificadores (`public`, `private`, `readonly`)',
+        'Un error de sintaxis',
+        'Pasar parámetros como objetos',
+        'Declarar variables globales'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Escribir `constructor(public nombre: string)` declara e inicializa la propiedad `nombre` automáticamente sin escribir `this.nombre = nombre;`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_5',
+      topic: 'clases_constructores',
+      prompt: '¿Qué hace el código `constructor(readonly id: number)`?',
+      options: [
+        'Declara e inicializa una propiedad `id` de solo lectura en la clase',
+        'Hace el constructor privado',
+        'Impide instanciar la clase',
+        'Elimina el parámetro'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Es una propiedad de parámetro que asigna `this.id` y la marca como `readonly`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_6',
+      topic: 'clases_constructores',
+      prompt: '¿Con qué opción de compilador te exige TypeScript inicializar todas las propiedades declaradas en una clase?',
+      options: ['strictNullChecks', 'strictPropertyInitialization', 'noImplicitAny', 'target: es6'],
+      correctOptionIndex: 1,
+      explanation: '`strictPropertyInitialization` verifica que cada propiedad de clase sea inicializada en su declaración o en el constructor.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_7',
+      topic: 'clases_constructores',
+      prompt: '¿Cómo le indicas a TypeScript que una propiedad de clase será inicializada externamente (Definite Assignment Assertion)?',
+      options: ['propiedad!: number;', 'propiedad?: number;', 'readonly propiedad: number;', 'declare propiedad: number;'],
+      correctOptionIndex: 0,
+      explanation: 'El operador `!` (exclamation mark) le indica a TS que la propiedad definitivamente tendrá un valor asignado antes de ser usada.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cls_8',
+      topic: 'clases_constructores',
+      prompt: '¿Qué palabra clave define métodos o propiedades de clase que pertenecen a la Clase misma y NO a sus instancias?',
+      options: ['public', 'static', 'const', 'global'],
+      correctOptionIndex: 1,
+      explanation: '`static` define miembros estáticos accesibles directamente como `MiClase.miMetodoEstatico()`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_9',
+      topic: 'clases_constructores',
+      prompt: '¿Cómo accedes a un miembro estático `contador` dentro de un método de la propia clase `Usuario`?',
+      options: ['this.contador', 'Usuario.contador', 'super.contador', 'contador'],
+      correctOptionIndex: 1,
+      explanation: 'Los miembros estáticos se acceden utilizando el nombre de la clase (`Usuario.contador`).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_10',
+      topic: 'clases_constructores',
+      prompt: '¿Qué sintaxis se utiliza para definir Getters y Setters en una clase?',
+      options: [
+        'get valor() {} y set valor(v) {}',
+        'getter valor() {} y setter valor(v) {}',
+        'read valor() {} y write valor(v) {}',
+        'function get_valor() {}'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las palabras clave `get` y `set` definen descriptores de acceso a propiedades (accessors).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_11',
+      topic: 'clases_constructores',
+      prompt: ' Si una propiedad solo tiene un `get` pero no tiene `set`, ¿qué infiere TypeScript?',
+      options: [
+        'Es una propiedad opcional',
+        'La propiedad es automáticamente de solo lectura (`readonly`)',
+        'Es un error de compilación',
+        'Se genera un setter por defecto'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Un accessor que posee un `get` pero carece de `set` se infiere automáticamente como `readonly`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_12',
+      topic: 'clases_constructores',
+      prompt: '¿Qué hace la sintaxis `override` en un método de clase?',
+      options: [
+        'Elimina el método anterior',
+        'Asegura explícitamente que el método está sobrescribiendo un método existente en la clase base; si no existe en la base, TS lanza un error',
+        'Hace el método privado',
+        'Ejecuta el método dos veces'
+      ],
+      correctOptionIndex: 1,
+      explanation: '`override` (con la bandera `noImplicitOverride`) previene errores al renombrar o modificar métodos en clases base.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cls_13',
+      topic: 'clases_constructores',
+      prompt: '¿Pueden las clases en TypeScript ser anónimas (Class Expressions)?',
+      options: [
+        'Sí, por ejemplo: `const MiClase = class { ... };`',
+        'No, las clases siempre requieren un nombre',
+        'Solo si son abstractas',
+        'Solo en node.js'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las expresiones de clase asignadas a variables son perfectamente válidas.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_14',
+      topic: 'clases_constructores',
+      prompt: '¿Qué tipo de dato tiene el parámetro `v` en `set edad(v)` si `get edad(): number` devuelve `number`?',
+      options: ['any', 'number', 'string', 'unknown'],
+      correctOptionIndex: 1,
+      explanation: 'TypeScript infiere o requiere que el tipo del setter coincida con el tipo de retorno del getter correspondiente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_15',
+      topic: 'clases_constructores',
+      prompt: '¿Cómo declaras un bloque estático de inicialización (`static { ... }`)?',
+      options: [
+        'Un bloque dentro de la clase para ejecutar lógica compleja de configuración estática con acceso a variables privadas estáticas',
+        'Un constructor secundario',
+        'Un error de JavaScript',
+        'Un método especial'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los bloques `static { ... }` (ES2022) permiten ejecutar sentencias complejas para inicializar campos estáticos de la clase.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cls_16',
+      topic: 'clases_constructores',
+      prompt: '¿Se compilan las clases de TypeScript a código ejecutable en JavaScript?',
+      options: [
+        'No, son borradas',
+        'Sí, se transpilan a funciones de prototipo (ES5) o clases nativas ES6 según el `target` configurado',
+        'Solo en modo desarrollo',
+        'Se compilan a HTML'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'A diferencia de las interfaces, las clases son estructuras nativas de JS y permanecen en el código emitido.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cls_17',
+      topic: 'clases_constructores',
+      prompt: '¿Cómo se representa el tipo de la propia instancia dentro de una clase para permitir encadenamiento de métodos (Fluent Interface)?',
+      options: ['this', 'Self', 'Instance', 'typeof this'],
+      correctOptionIndex: 0,
+      explanation: 'Usar `this` como tipo de retorno permite que las subclases mantengan el tipado correcto de su propia clase en llamadas encadenadas (`return this`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cls_18',
+      topic: 'clases_constructores',
+      prompt: '¿Qué es una clase Genérica?',
+      options: [
+        'Una clase sin propiedades',
+        'Una clase que acepta uno o más parámetros de tipo: `class Caja<T> { contenido: T; }`',
+        'Una clase abstracta',
+        'Una clase estática'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Las clases genéricas permiten definir estructuras reusables que trabajan con tipos especificados al momento de instanciar.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cls_19',
+      topic: 'clases_constructores',
+      prompt: '¿Pueden los miembros estáticos de una clase genérica utilizar los parámetros de tipo `<T>` de la clase?',
+      options: [
+        'Sí, sin problemas',
+        'No, los miembros estáticos no pueden referenciar el tipo `<T>` de la clase porque residen a nivel de clase y no de instancia',
+        'Solo si son de solo lectura',
+        'Solo en el constructor'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Dado que los miembros estáticos no dependen de una instancia instanciada con `<T>`, no tienen acceso a `T`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cls_20',
+      topic: 'clases_constructores',
+      prompt: '¿Cuál es el valor predeterminado del contexto `this` cuando se extrae un método de una clase `const fn = obj.metodo; fn();` sin arrow functions ni binding?',
+      options: ['El objeto `obj`', '`undefined` en modo estricto (o `window`/`global` en modo no estricto)', 'La clase', 'Un error de compilación'],
+      correctOptionIndex: 1,
+      explanation: 'Al desasociar un método normal de su objeto, `this` pierde su referencia original y pasa a ser `undefined` en modo estricto.',
+      difficulty: 'medium',
+    },
+  ],
+
+  herencia_polimorfismo: [
+    {
+      id: 'her_1',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué palabra clave se usa para que una clase derivada herede de una clase base?',
+      options: ['implements', 'extends', 'inherits', 'super'],
+      correctOptionIndex: 1,
+      explanation: '`extends` establece una relación de herencia entre una subclase y una clase base.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_2',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué llamada es OBLIGATORIA dentro del constructor de una subclase antes de acceder a `this`?',
+      options: ['super()', 'base()', 'parent()', 'this.init()'],
+      correctOptionIndex: 0,
+      explanation: 'Invocaciones a `super(...)` deben ejecutarse primero en el constructor de una clase derivada antes de hacer referencia a `this`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_3',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué es una Clase Abstracta (`abstract class`)?',
+      options: [
+        'Una clase que no se puede instanciar directamente con `new` y sirve como clase base para otras',
+        'Una clase sin métodos',
+        'Una interfaz',
+        'Una clase que solo tiene miembros estáticos'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las clases abstractas actúan como modelos base y no pueden ser instanciadas directamente, solo extendidas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_4',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué es un Método Abstracto (`abstract miMetodo(): void;`) dentro de una clase abstracta?',
+      options: [
+        'Un método que no tiene cuerpo y DEBE ser implementado por las subclases concretas',
+        'Un método privado',
+        'Un método estático',
+        'Un método que lanza un error'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los métodos abstractos definen la firma sin cuerpo; las clases hijas están obligadas a proporcionar su implementación.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_5',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué es el Polimorfismo en POO?',
+      options: [
+        'La capacidad de diferentes clases derivadas de responder al mismo mensaje o método de formas específicas para cada una',
+        'Cambiar el tipo de una variable en runtime',
+        'Tener múltiples constructores',
+        'Convertir objetos en cadenas'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Polimorfismo permite tratar a objetos de distintas subclases como si fueran de su clase base, ejecutando la versión adecuada del método.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_6',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Se emiten las palabras clave `abstract` en el código JavaScript compilado final?',
+      options: [
+        'No, `abstract` se elimina y la clase se transquila como una clase normal de JS',
+        'Sí, `abstract` existe en ES6',
+        'Se convierten en comentarios',
+        'Se convierten en interfaces'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`abstract` es un modificador exclusivo de TypeScript; en JS compilado se convierte en una clase estándar.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_7',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Puede una clase extender MÚLTIPLES clases base a la vez (`class C extends A, B`)?',
+      options: [
+        'No, TypeScript/JS solo admite herencia simple de una sola clase base',
+        'Sí, herencia múltiple completa',
+        'Solo si son abstractas',
+        'Solo con el flag `multiInherit`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'JavaScript y TypeScript no soportan herencia múltiple de clases. Se deben usar mixins o interfaces para lograr patrones similares.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_8',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Cómo invocas un método de la clase padre desde un método de la clase derivada?',
+      options: ['super.metodoPadre()', 'this.metodoPadre()', 'parent.metodoPadre()', 'Base.metodoPadre()'],
+      correctOptionIndex: 0,
+      explanation: 'La palabra clave `super` hace referencia al prototipo/métodos de la clase base.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_9',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué ocurre si una subclase no define un `constructor` propio?',
+      options: [
+        'Lanza un error de compilación',
+        'Hereda e invoca automáticamente el constructor de la clase padre',
+        'Se crea un constructor sin parámetros',
+        'Las propiedades no se inicializan'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'Si la subclase no incluye un constructor, el constructor de la clase base se llama automáticamente.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_10',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué es el patrón Mixin en TypeScript?',
+      options: [
+        'Una función que toma un constructor de clase como entrada y devuelve una nueva clase que extiende esa clase con nuevas funcionalidades',
+        'Una librería externa',
+        'Mezclar interfaces con tipos primitivos',
+        'Un tipo de enum'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Mixins son funciones que generan clases derivadas dinámicamente, simulando herencia múltiple.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'her_11',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué operador se utiliza para verificar si un objeto es una instancia de una clase particular en tiempo de ejecución?',
+      options: ['typeof', 'instanceof', 'is', 'in'],
+      correctOptionIndex: 1,
+      explanation: '`instanceof` comprueba si el prototipo de una clase aparece en la cadena de prototipos del objeto.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'her_12',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Es compatible un objeto de subclase `Perro` donde se requiere una clase base `Animal`?',
+      options: [
+        'Sí, una subclase es siempre asignable a su superclase (Principio de Sustitución de Liskov)',
+        'No, requieren un cast explícito',
+        'Solo si no agregan nuevos métodos',
+        'Solo si se usa `any`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Una subclase satisface el tipo de su superclase y puede ser usada de forma transparente donde la superclase sea requerida.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_13',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Es compatible una instancia de superclase `Animal` donde se requiere explícitamente la subclase `Perro`?',
+      options: [
+        'No, puede carecer de miembros específicos declarados en `Perro`',
+        'Sí, siempre',
+        'Solo si es abstracta',
+        'Solo con el operador `+`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La superclase no garantiza tener las propiedades adicionales que la subclase añade.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_14',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué sucede si un método de la subclase intenta cambiar la firma cambiando los tipos de parámetros por otros completamente incompatibles?',
+      options: [
+        'Se compila igual',
+        'TypeScript arroja un error indicando que la sobrescritura es incompatible con la definición de la clase base',
+        'Crea una sobrecarga automática',
+        'Convierte los tipos a `any`'
+      ],
+      correctOptionIndex: 1,
+      explanation: 'El método sobrescrito debe ser compatible con la firma del método correspondiente en la clase padre.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_15',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Cómo declaras el tipo del constructor de una clase abstracta para usarlo como parámetro genérico `type Constructor<T> = ...`?',
+      options: [
+        'abstract new (...args: any[]) => T',
+        'new (...args: any[]) => T',
+        'Function<T>',
+        'Class<T>'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`abstract new (...args: any[]) => T` representa la firma constructora de una clase que puede ser abstracta.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'her_16',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Puede una clase concreta implementar múltiples interfaces y al mismo tiempo extender una clase?',
+      options: [
+        'Sí: `class MiClase extends ClaseBase implements Int1, Int2`',
+        'No, debe elegir una u otra',
+        'Solo en orden inverso',
+        'Solo si no hay constructor'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Es la forma estándar de combinar reutilización de código (herencia de clase) y contratos estructurales (interfaces).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_17',
+      topic: 'herencia_polimorfismo',
+      prompt: 'En la sintaxis anterior, ¿cuál palabra clave debe ir PRIMERO?',
+      options: ['`extends` debe ir antes que `implements`', '`implements` debe ir antes que `extends`', 'El orden da igual', 'No se pueden combinar'],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis exige `extends` antes de `implements`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_18',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Qué es el acoplamiento fuerte en herencia?',
+      options: [
+        'Cuando las subclases dependen íntimamente de los detalles de implementación de la clase padre, haciendo el código difícil de modificar',
+        'Un error de compilación',
+        'Unir dos módulos',
+        'Usar `strict: true`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El acoplamiento fuerte ocurre cuando los cambios en la superclase rompen fácilmente las clases derivadas (Favorecer composición sobre herencia).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'her_19',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Pueden las propiedades abstractas declararse dentro de una clase abstracta?',
+      options: [
+        'Sí: `abstract nombre: string;`',
+        'No, solo los métodos pueden ser abstractos',
+        'Solo si son estáticas',
+        'Solo si son privadas'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Tanto métodos como propiedades pueden marcarse como `abstract` exigiendo su definición en subclases.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'her_20',
+      topic: 'herencia_polimorfismo',
+      prompt: '¿Pueden los miembros marcados como `private` en la clase padre ser accedidos directamente por las subclases?',
+      options: [
+        'No, los miembros `private` no son accesibles desde las subclases (se debe usar `protected`)',
+        'Sí, siempre',
+        'Solo si se usa `super`',
+        'Solo con `this`'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`private` restringe el acceso EXCLUSIVAMENTE a la clase donde fue declarado. Para permitir acceso a subclases se debe usar `protected`.',
+      difficulty: 'medium',
+    },
+  ],
+
+  modificadores_acceso: [
+    {
+      id: 'mod_1',
+      topic: 'modificadores_acceso',
+      prompt: '¿Cuál es el modificador de acceso por defecto en los miembros de una clase si no se especifica ninguno?',
+      options: ['public', 'private', 'protected', 'internal'],
+      correctOptionIndex: 0,
+      explanation: 'En TypeScript, todos los miembros de una clase son `public` por defecto.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'mod_2',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué visibilidad otorga el modificador `private` en TypeScript?',
+      options: [
+        'El miembro solo es accesible dentro de la clase que lo declara',
+        'Accesible desde cualquier lugar',
+        'Accesible dentro de la clase y sus subclases',
+        'Accesible dentro del mismo módulo'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`private` limita el acceso exclusivamente al cuerpo de la clase contenedora.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'mod_3',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué visibilidad otorga el modificador `protected`?',
+      options: [
+        'Accesible dentro de la clase que lo declara Y dentro de cualquier subclase derivada',
+        'Accesible públicamente desde cualquier parte',
+        'Solo accesible en el constructor',
+        'Privado en runtime'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`protected` permite que la propia clase y todas sus herederas tengan acceso al miembro, pero previene su acceso desde instancias externas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'mod_4',
+      topic: 'modificadores_acceso',
+      prompt: '¿Cuál es la diferencia entre el `private` de TypeScript y los Campos Privados Nativos de JavaScript (`#propiedad`)?',
+      options: [
+        '`private` solo se comprueba en compilación y desaparece en JS, mientras que `#propiedad` es verdaderamente privado en tiempo de ejecución en JS',
+        'No hay diferencia',
+        '`#propiedad` es una sintaxis antigua',
+        '`private` es más rápido en runtime'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`private` es una verificación puramente estática. Los campos `#` de ES2020 imponen privacidad estricta en el motor JavaScript en tiempo de ejecución.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_5',
+      topic: 'modificadores_acceso',
+      prompt: '¿Se puede acceder a un miembro `private` de TypeScript desde JavaScript puro transpilado (ES5)?',
+      options: [
+        'Sí, porque `private` se elimina durante la transpilación',
+        'No, lanza un error de runtime',
+        'Solo con `eval`',
+        'Solo en Node.js'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Como los modificadores se remueven en compilación, en JS compilado tradicional la propiedad es una propiedad normal del objeto.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_6',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué sucede si intentas acceder a un miembro `#privado` de JS que no ha sido declarado en la clase?',
+      options: [
+        'Genera un SyntaxError inmediato tanto en compilación como en tiempo de ejecución',
+        'Devuelve `undefined`',
+        'Se crea la propiedad al vuelo',
+        'Se convierte en `public`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los campos privados con `#` deben declararse obligatoriamente de forma explícita en la clase.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_7',
+      topic: 'modificadores_acceso',
+      prompt: '¿Puede un constructor de clase ser marcado como `protected`?',
+      options: [
+        'Sí, esto impide instanciar la clase directamente con `new`, pero permite a las subclases extenderla y llamar `super()`',
+        'No, los constructores siempre deben ser públicos',
+        'Solo si es estático',
+        'Solo en interfaces'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Un constructor `protected` impide que la clase sea instanciada fuera de su jerarquía de herencia.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_8',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué patrón de diseño utiliza a menudo un constructor `private`?',
+      options: ['Patrón Singleton', 'Patrón Decorador', 'Patrón Observer', 'Patrón Adaptador'],
+      correctOptionIndex: 0,
+      explanation: 'El patrón Singleton hace su constructor `private` para controlar y garantizar la existencia de una única instancia mediante un método estático (ej. `getInstance()`).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_9',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué hace el modificador `readonly` aplicado a una propiedad de clase?',
+      options: [
+        'Impide que la propiedad sea modificada después de su inicialización (en su declaración o dentro del constructor)',
+        'Hace la propiedad privada',
+        'Oculta la propiedad del IDE',
+        'Elimina la propiedad'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`readonly` impide escrituras posteriores a la asignación inicial o construcción.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'mod_10',
+      topic: 'modificadores_acceso',
+      prompt: '¿Pueden combinarse `private` y `readonly` en la misma declaración: `private readonly id: string;`?',
+      options: [
+        'Sí, la propiedad es privada para la clase Y de solo lectura',
+        'No, son mutuamente excluyentes',
+        'Solo en constructores',
+        'Solo en interfaces'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Es un patrón muy común para proteger inmutabilidad e encapsulamiento interno.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'mod_11',
+      topic: 'modificadores_acceso',
+      prompt: '¿Puede una subclase cambiar la visibilidad de una propiedad `protected` de la clase padre a `public` en la subclase?',
+      options: [
+        'Sí, TypeScript permite ampliar la visibilidad en las clases derivadas',
+        'No, nunca se puede modificar la visibilidad',
+        'Solo a `private`',
+        'Solo si la clase es abstracta'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Una subclase puede hacer pública una propiedad que era `protected` en la clase base.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_12',
+      topic: 'modificadores_acceso',
+      prompt: '¿Puede una subclase cambiar la visibilidad de una propiedad `public` de la clase padre a `private`?',
+      options: [
+        'No, rompería la compatibilidad estructural de tipos de la superclase',
+        'Sí, sin restricciones',
+        'Solo con la opción `strict`',
+        'Solo si es un método'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Restringir la visibilidad violaría el principio de sustitución, impidiendo que la subclase sea asignable a la superclase.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_13',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué modificador se usa en las "Parameter Properties" de un constructor?',
+      options: ['public', 'private', 'protected', 'Cualquiera de los anteriores (incluyendo `readonly`)'],
+      correctOptionIndex: 3,
+      explanation: 'Anteponer `public`, `private`, `protected` o `readonly` a un argumento del constructor crea la propiedad automáticamente.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_14',
+      topic: 'modificadores_acceso',
+      prompt: '¿Cómo se comporta la comprobación de tipos cuando dos clases distintas tienen propiedades `private` con el mismo nombre y tipo?',
+      options: [
+        'Son estructuralmente incompatibles porque el origen del atributo privado debe provenir exactamente de la misma clase',
+        'Son 100% compatibles',
+        'Se combinan',
+        'TypeScript las ignora'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'A diferencia de las propiedades públicas, los miembros `private` y `protected` requieren provenir de la misma declaración para ser estructuralmente equivalentes.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_15',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué hace la palabra clave `override` cuando se usa con métodos de clase?',
+      options: [
+        'Verifica que exista un método con el mismo nombre en la clase padre para evitar sobrescrituras accidentales por errores tipográficos',
+        'Hace el método privado',
+        'Sobrescribe variables globales',
+        'Desactiva los tipos'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`override` previene desincronizaciones al renombrar métodos en la superclase.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_16',
+      topic: 'modificadores_acceso',
+      prompt: '¿Existe el modificador de acceso `package-private` o `internal` en TypeScript estándar?',
+      options: [
+        'No, no existen palabras clave `internal` o `package` para miembros de clase',
+        'Sí, se usa `internal`',
+        'Sí, se usa `package`',
+        'Se activa con `module: commonjs`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'TypeScript solo ofrece `public`, `private` y `protected`. El ámbito de archivo se controla mediante exportaciones de módulos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_17',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué ocurre si intentas usar `readonly` en un método de clase `readonly miMetodo() {}`?',
+      options: [
+        'Es un error de sintaxis, `readonly` solo aplica a propiedades o índices',
+        'Hace que el método no pueda ser sobrescrito',
+        'Hace el método estático',
+        'No tiene efecto'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`readonly` solo es válido para atributos/propiedades de datos, no para declaraciones de métodos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_18',
+      topic: 'modificadores_acceso',
+      prompt: '¿Se puede acceder a una propiedad `private` usando la sintaxis de corchetes `objeto["miPrivada"]` en TypeScript?',
+      options: [
+        'En compilación TypeScript marcará un error de propiedad privada, a menos que se use `as any` o en JS sin comprobación estricta',
+        'Sí, los corchetes siempre evitan cualquier regla de tipos',
+        'Nunca es posible',
+        'Se convierte en pública'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El compilador de TS bloquea el acceso por notación de punto o corchetes a menos que se fuerce con casteo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'mod_19',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué ventaja principal ofrecen los campos privados nativos `#prop` frente a `private`?',
+      options: [
+        'Ofrecen encapsulamiento real y garantizado por el motor JS en tiempo de ejecución sin depender del compilador TS',
+        'Son más fáciles de escribir',
+        'Soportan decoradores viejos',
+        'No requieren clases'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`#prop` garantiza la privacidad en runtime, impidiendo accesos accidentales o maliciosos por reflexión o inspexión de objetos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'mod_20',
+      topic: 'modificadores_acceso',
+      prompt: '¿Qué hace la opción de compilador `noImplicitOverride: true`?',
+      options: [
+        'Exige usar explícitamente la palabra clave `override` en cualquier método que sobrescriba a uno de la clase base',
+        'Desactiva los métodos sobreescritos',
+        'Prohíbe la herencia',
+        'Hace todo `readonly`'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`noImplicitOverride` obliga al programador a explicitar los métodos que modifican comportamientos heredados.',
+      difficulty: 'hard',
+    },
+  ],
+
+  // --- SECCIÓN 5: TIPOS AVANZADOS ---
+  genericos: [
+    {
+      id: 'gen_1',
+      topic: 'genericos',
+      prompt: '¿Qué son los Genéricos en TypeScript?',
+      options: [
+        'Una forma de crear componentes reusables que pueden trabajar con una variedad de tipos en lugar de uno solo, manteniendo la seguridad de tipos',
+        'Variables del tipo `any`',
+        'Archivos sin código',
+        'Librerías externas'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los genéricos permiten parametrizar tipos en funciones, interfaces y clases.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_2',
+      topic: 'genericos',
+      prompt: '¿Cuál es la sintaxis típica para definir una función genérica que retorna el mismo tipo recibido?',
+      options: [
+        'function identidad<T>(arg: T): T { return arg; }',
+        'function identidad(arg: generic): generic { return arg; }',
+        'function identidad<T>(arg: any): any { return arg; }',
+        'function<T> identidad(arg: T): T { return arg; }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis `<T>` define un parámetro de tipo para la función.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_3',
+      topic: 'genericos',
+      prompt: '¿Cómo restringes un parámetro genérico `<T>` para que solo acepte tipos que tengan la propiedad `length: number`?',
+      options: [
+        '<T extends { length: number }>',
+        '<T implements HasLength>',
+        '<T = length>',
+        '<T restrict length>'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`extends` impone una restricción (generic constraint) exigiendo que `T` cumpla con esa estructura.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'gen_4',
+      topic: 'genericos',
+      prompt: '¿Cómo especificas un valor de Tipo Por Defecto para un genérico `<T = string>`?',
+      options: [
+        'Asignando `= string` dentro de los corchetes angulares de definición del genérico',
+        'Usando `default string`',
+        'No es posible en TypeScript',
+        'Usando `as string`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Generic Parameter Defaults permiten que el tipo sea `string` si no se pasa ni infiere ninguno.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'gen_5',
+      topic: 'genericos',
+      prompt: '¿Cómo se declara una interfaz genérica `Respuesta` que contiene un payload de tipo variable `datos`?',
+      options: [
+        'interface Respuesta<T> { status: number; datos: T; }',
+        'interface Respuesta { status: number; datos: generic; }',
+        'type Respuesta = <T>{ datos: T };',
+        'interface Respuesta<T = any> = { datos: T }'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`interface Nombre<T>` parametriza la estructura de la interfaz con el tipo `T`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_6',
+      topic: 'genericos',
+      prompt: '¿Cómo infiere TypeScript el tipo genérico en la llamada `identidad("Hola")`?',
+      options: [
+        'Infiere `T` como `"Hola"` / `string` automáticamente sin necesidad de escribir `<string>` explícitamente',
+        'Falla si no se escribe `identidad<string>("Hola")`',
+        'Infiere `T` como `any`',
+        'Infiere `T` como `unknown`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La inferencia de argumentos de tipo deduce `T` a partir del argumento pasado en la llamada.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_7',
+      topic: 'genericos',
+      prompt: '¿Cómo se asegura de que la clave dada `K` pertenezca obligatoriamente a las propiedades de un objeto `T` en una función `obtenerProp`?',
+      options: [
+        '<T, K extends keyof T>(obj: T, key: K)',
+        '<T, K in T>(obj: T, key: K)',
+        '<T, K typeof T>(obj: T, key: K)',
+        '<T, K = keyof T>(obj: T, key: K)'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`K extends keyof T` restringe el genérico `K` a ser exclusivamente una de las claves de `T`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_8',
+      topic: 'genericos',
+      prompt: '¿Pueden las Clases ser genéricas (`class Contenedor<T>`)?',
+      options: [
+        'Sí, exactamente igual que las interfaces y funciones',
+        'No, solo las funciones son genéricas',
+        'Solo si heredan de `Object`',
+        'Solo en modo no estricto'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las clases genéricas ayudan a crear colecciones y estructuras de datos tipadas reusables.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_9',
+      topic: 'genericos',
+      prompt: '¿Pueden los Alias de Tipo (`type`) ser genéricos?',
+      options: [
+        'Sí: `type Arbol<T> = { valor: T; hijos?: Arbol<T>[]; };`',
+        'No, solo las interfaces',
+        'Solo si son uniones de cadenas',
+        'Solo usando `any`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Type Aliases aceptan parámetros genéricos para definir formas de tipos complejas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_10',
+      topic: 'genericos',
+      prompt: '¿Qué es la covarianza y contravarianza en tipos genéricos?',
+      options: [
+        'Cómo afecta la relación de sub-tipos de `T` y `U` a la relación de sub-tipos de sus envolventes `F<T>` y `F<U>`',
+        'Un error de rendimiento',
+        'Crear arreglos genéricos',
+        'Lanzar excepciones'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Variación de tipos (Variance) describe si `F<SubTipo>` se puede asignar a `F<SuperTipo>` (covarianza) o viceversa (contravarianza).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_11',
+      topic: 'genericos',
+      prompt: 'En TypeScript 4.7+, ¿qué hacen las anotaciones explícitas de varianza `in` y `out` en genéricos `<in out T>`?',
+      options: [
+        'Permiten declarar si el genérico es de entrada (`in` - contravariante), de salida (`out` - covariante) o ambos (invariante) para acelerar la comprobación del compilador',
+        'Importan y exportan tipos',
+        'Crean variables de memoria',
+        'No existen en TypeScript'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los marcadores de varianza opcionales `in` / `out` ayudan al compilador a optimizar la comprobación de tipos genéricos profundos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_12',
+      topic: 'genericos',
+      prompt: '¿Cuál es el resultado de `typeof` sobre un tipo genérico en tiempo de ejecución?',
+      options: [
+        'No existe `typeof` para genéricos en runtime porque los tipos genéricos desaparecen en JS compilado',
+        'Devuelve `"generic"',
+        'Devuelve `"T"',
+        'Devuelve `"object"'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Toda la información de tipos genéricos se borra en tiempo de compilación.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_13',
+      topic: 'genericos',
+      prompt: '¿Cómo declaras una función genérica que crea una nueva instancia de una clase dada `factory`?',
+      options: [
+        'function crear<T>(c: new () => T): T { return new c(); }',
+        'function crear<T>(c: T): T { return new c(); }',
+        'function crear<T>(c: Class<T>): T { return c.create(); }',
+        'function crear<T>(c: Function): T { return c(); }'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`c: new () => T` especifica un tipo de función constructora que produce instancias de `T`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_14',
+      topic: 'genericos',
+      prompt: '¿Se pueden tener MÚLTIPLES parámetros de tipo en una definición como `<T, U, K>`?',
+      options: [
+        'Sí, separándolos por comas',
+        'No, máximo un parámetro por definición',
+        'Máximo dos parámetros',
+        'Solo si son de tipo number'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Puedes declarar tantos parámetros de tipo como necesites (`<T, U, V>`).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_15',
+      topic: 'genericos',
+      prompt: '¿Qué sucede si intentas usar métodos numéricos como `arg.toFixed()` en un parámetro genérico `<T>` sin restricciones?',
+      options: [
+        'Error de compilación porque `T` no garantiza ser de tipo `number`',
+        'TypeScript asume que es number y compila',
+        'Funciona pero devuelve `undefined`',
+        'Se convierte a `any`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Sin una restricción `<T extends number>`, TypeScript no asume ninguna propiedad o método específico en `T`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'gen_16',
+      topic: 'genericos',
+      prompt: '¿Qué es una afirmación de const en genéricos (Generic Const Modifiers) `function fn<const T>(arg: T)` en TS 5.0+?',
+      options: [
+        'Infiere automáticamente el tipo genérico con la precisión de literales `as const`',
+        'Hace los argumentos inmutables en runtime',
+        'Hace la función estática',
+        'Evita instanciar la función'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`<const T>` hace que la inferencia de argumentos infiera tipos tupla e hiper-específicos literales de forma predeterminada.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_17',
+      topic: 'genericos',
+      prompt: '¿Cómo declaras una tupla genérica rest (Generic Rest Elements)?',
+      options: [
+        'type TupleWithHead<T, U extends any[]> = [T, ...U];',
+        'type Tuple<T> = [...T];',
+        'type Tuple = Array<...T>;',
+        'No es posible'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'TypeScript permite desplegar variables de tipo de tuplas/arreglos dentro de definiciones de tupla.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'gen_18',
+      topic: 'genericos',
+      prompt: '¿Cuál es la diferencia entre `Array<any>` y `Array<unknown>`?',
+      options: [
+        '`Array<any>` permite realizar cualquier operación en sus elementos sin comprobación; `Array<unknown>` exige type checks antes de acceder a sus miembros',
+        'No hay diferencia',
+        '`Array<unknown>` no permite guardar elementos',
+        '`Array<any>` es más rápido'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`unknown` mantiene la seguridad de tipos exigiendo narrowing al extraer elementos del arreglo.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'gen_19',
+      topic: 'genericos',
+      prompt: '¿Qué convención de nombres se suele utilizar para parámetros de tipo genérico?',
+      options: [
+        'Letras mayúsculas únicas como `T`, `U`, `V`, o nombres descriptivos en PascalCase como `TEntity`',
+        'Nombres en minúscula como `t`, `u`',
+        'Prefijos con `$t`',
+        'Números'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Se usan tradicionalmente letras mayúsculas simples como `T` (Type), `K` (Key), `V` (Value) o nombres descriptivos en PascalCase.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'gen_20',
+      topic: 'genericos',
+      prompt: '¿Pueden las funciones flecha ser genéricas?',
+      options: [
+        'Sí: `const id = <T>(arg: T): T => arg;`',
+        'No, solo las funciones `function` tradicionales',
+        'Solo si usan `type` previo',
+        'Solo en Node.js'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las funciones flecha admiten parámetros de tipo situándolos justo antes de los paréntesis de argumentos.',
+      difficulty: 'easy',
+    },
+  ],
+
+  utility_types: [
+    {
+      id: 'util_1',
+      topic: 'utility_types',
+      prompt: '¿Qué hace el Utility Type `Partial<T>`?',
+      options: [
+        'Construye un tipo con todas las propiedades de `T` marcadas como opcionales (`?`)',
+        'Elimina la mitad de las propiedades',
+        'Hace las propiedades `readonly`',
+        'Hace todas las propiedades requeridas'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Partial<T>` transforma todas las propiedades de un objeto a opcionales.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_2',
+      topic: 'utility_types',
+      prompt: '¿Qué hace el Utility Type `Required<T>`?',
+      options: [
+        'Construye un tipo con todas las propiedades de `T` convertidas en obligatorias (remueve `?`)',
+        'Elimina propiedades opcionales',
+        'Hace todo `readonly`',
+        'Valida valores en runtime'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Required<T>` invierte a `Partial`, obligando a que todas las propiedades estén presentes.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_3',
+      topic: 'utility_types',
+      prompt: '¿Qué hace el Utility Type `Readonly<T>`?',
+      options: [
+        'Hace que todas las propiedades del tipo `T` sean de solo lectura (`readonly`)',
+        'Elimina los métodos',
+        'Convierte el objeto a string',
+        'Congela el objeto en memoria JS'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Readonly<T>` reasigna todas las propiedades para que no se puedan modificar tras crearse.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_4',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Record<K, T>`?',
+      options: [
+        'Construye un tipo de objeto cuyas claves son del tipo `K` y cuyos valores son del tipo `T`',
+        'Crea un arreglo de registros',
+        'Graba datos en disco',
+        'Convierte un objeto en una Tupla'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Record<Keys, Type>` es la forma concisa de definir mapas/diccionarios tipados.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_5',
+      topic: 'utility_types',
+      prompt: ' Dada la interfaz `User { id: number; name: string; email: string; }`, ¿qué hace `Pick<User, "name" | "email">`?',
+      options: [
+        'Crea un tipo nuevo que contiene ÚNICAMENTE las propiedades `"name"` y `"email"`',
+        'Elimina `"name"` y `"email"` dejando solo `id`',
+        'Devuelve una tupla',
+        'Selecciona valores en runtime'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Pick<T, K>` extrae un subconjunto de propiedades elegidas de `T`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_6',
+      topic: 'utility_types',
+      prompt: 'Dada la misma interfaz `User`, ¿qué hace `Omit<User, "email">`?',
+      options: [
+        'Crea un tipo nuevo seleccionando todas las propiedades de `User` EXCEPTO `"email"`',
+        'Selecciona solo `"email"`',
+        'Hace `"email"` opcional',
+        'Elimina el objeto'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Omit<T, K>` construye un tipo omitiendo las claves especificadas.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_7',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Exclude<T, U>`?',
+      options: [
+        'Excluye de la unión `T` todos los tipos que son asignables a `U`',
+        'Elimina propiedades de un objeto',
+        'Excluye archivos de compilación',
+        'Desactiva un tipo'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Exclude<UnionType, ExcludedMembers>` trabaja sobre tipos de UNIÓN para filtrar miembros.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_8',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Extract<T, U>`?',
+      options: [
+        'Extrae de la unión `T` todos los miembros que son asignables a `U` (la intersección de los tipos de unión)',
+        'Extrae archivos JS',
+        'Extrae valores de un objeto',
+        'Convierte a string'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Extract<T, U>` filtra una unión conservando únicamente los miembros presentes también en `U`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_9',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `NonNullable<T>`?',
+      options: [
+        'Construye un tipo excluyendo `null` y `undefined` de la unión `T`',
+        'Obliga a que un objeto no sea nulo en runtime',
+        'Lanza un NullPointerException',
+        'Convierte `null` en `0`'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`NonNullable<T>` elimina los tipos nulos/indefinidos de un tipo de unión.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_10',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `ReturnType<T>` donde `T` es un tipo de función?',
+      options: [
+        'Extrae el tipo de retorno de la función `T`',
+        'Devuelve la función misma',
+        'Devuelve los tipos de los argumentos',
+        'Ejecuta la función'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`ReturnType<typeof fn>` obtiene el tipo retornado por una función.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_11',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Parameters<T>` donde `T` es un tipo de función?',
+      options: [
+        'Obtiene una TUPLA con los tipos de los parámetros que recibe la función `T`',
+        'Obtiene el número de parámetros',
+        'Devuelve el tipo de retorno',
+        'Valida los parámetros'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Parameters<typeof fn>` produce una tupla conteniendo los tipos de cada argumento de la función.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_12',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Awaited<T>`?',
+      options: [
+        'Resuelve el tipo devuelto por una Promesa o funciones `async` (desenvuelve recursivamente `Promise<T>`)',
+        'Detiene la ejecución del hilo',
+        'Convierte una función en asíncrona',
+        'Crea una nueva Promise'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Awaited<Promise<string>>` evalúa al tipo desempaquetado interno `string`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_13',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `InstanceType<T>` donde `T` es un tipo de función constructora o clase?',
+      options: [
+        'Extrae el tipo de la instancia que produce el constructor de clase `T`',
+        'Devuelve el constructor mismo',
+        'Crea un nuevo objeto',
+        'Instancia la clase'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`InstanceType<typeof MiClase>` obtiene el tipo del objeto resultante al instanciar esa clase.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'util_14',
+      topic: 'utility_types',
+      prompt: 'Dada `type Status = "active" | "inactive" | null | undefined;`, ¿cuál es el resultado de `NonNullable<Status>`?',
+      options: ['"active" | "inactive"', 'null | undefined', 'string', 'never'],
+      correctOptionIndex: 0,
+      explanation: 'Remueve `null` y `undefined`, dejando solo `"active" | "inactive"`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'util_15',
+      topic: 'utility_types',
+      prompt: '¿Son profundos (deep/recursive) por defecto los Utility Types estándar como `Partial<T>` o `Readonly<T>`?',
+      options: [
+        'No, son superficiales (shallow); solo afectan al primer nivel de propiedades del objeto',
+        'Sí, modifican recursivamente todos los objetos anidados',
+        'Solo en modo estricto',
+        'Depende de la versión de JS'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Utility Types incorporados son superficiales. Para transformaciones profundas se requieren tipos mapeados recursivos (ej. `DeepPartial<T>`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'util_16',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `ConstructorParameters<T>`?',
+      options: [
+        'Extrae los tipos de los parámetros del constructor de una clase en forma de Tupla',
+        'Construye una nueva clase',
+        'Llama al constructor',
+        'Devuelve los métodos estáticos'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`ConstructorParameters<typeof Clase>` obtiene una tupla con los tipos requeridos por el constructor.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'util_17',
+      topic: 'utility_types',
+      prompt: '¿Qué utility type de manipulación de cadenas convierte una cadena literal a MAYÚSCULAS?',
+      options: ['Uppercase<S>', 'ToUpperCase<S>', 'Upper<S>', 'Capitalize<S>'],
+      correctOptionIndex: 0,
+      explanation: '`Uppercase<"hola">` evalúa al tipo literal `"HOLA"`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_18',
+      topic: 'utility_types',
+      prompt: '¿Qué hace `Capitalize<S>`?',
+      options: [
+        'Convierte el primer carácter de una cadena literal a Mayúscula',
+        'Convierte toda la cadena a mayúsculas',
+        'Agrega comillas',
+        'Elimina espacios'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`Capitalize<"hola">` resulta en `"Hola"`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_19',
+      topic: 'utility_types',
+      prompt: '¿Qué utility type convierte el primer carácter de una cadena literal a minúscula?',
+      options: ['Uncapitalize<S>', 'Lowercase<S>', 'Lower<S>', 'Small<S>'],
+      correctOptionIndex: 0,
+      explanation: '`Uncapitalize<"Hola">` evalúa a `"hola"`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'util_20',
+      topic: 'utility_types',
+      prompt: '¿Cómo obtienes el tipo de los elementos de una promesa resuelta en `async function getData() { return 123; }`?',
+      options: [
+        'Awaited<ReturnType<typeof getData>>',
+        'ReturnType<getData>',
+        'PromiseType<getData>',
+        'Unwrap<getData>'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Combinar `ReturnType` para obtener `Promise<number>` y `Awaited` para desenvolverla resulta en `number`.',
+      difficulty: 'hard',
+    },
+  ],
+
+  tipos_condicionales: [
+    {
+      id: 'cond_1',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cuál es la sintaxis básica de un Tipo Condicional en TypeScript?',
+      options: [
+        'T extends U ? X : Y',
+        'if (T extends U) { X } else { Y }',
+        'T == U => X | Y',
+        'Match<T, U, X, Y>'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los tipos condicionales usan la sintaxis del operador ternario: `T extends U ? X : Y`.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'cond_2',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué hace la palabra clave `infer` dentro de un tipo condicional?',
+      options: [
+        'Permite declarar e inferir dinámicamente una variable de tipo dentro de la cláusula `true` de la condición',
+        'Infiere el tipo en tiempo de ejecución',
+        'Fuerza un cast de tipo',
+        'Importa un tipo externo'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`infer` introduce una variable de tipo temporal que TypeScript deduce automáticamente si la condición se cumple.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_3',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo definirías un tipo `UnpackArray<T>` que extraiga el tipo interno de un arreglo usando `infer`?',
+      options: [
+        'type UnpackArray<T> = T extends (infer U)[] ? U : T;',
+        'type UnpackArray<T> = T extends Array ? any : T;',
+        'type UnpackArray<T> = infer T[];',
+        'type UnpackArray<T> = T[infer];'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`T extends (infer U)[] ? U : T` extrae el tipo `U` del elemento del arreglo si `T` es un arreglo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_4',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué son los Tipos Condicionales Distributivos (Distributive Conditional Types)?',
+      options: [
+        'Cuando un tipo condicional actúa sobre un tipo de unión desglosándola y aplicando la condición a cada miembro individualmente',
+        'Tipos repartidos en múltiples archivos',
+        'Un bucle for en tipos',
+        'Tipos para sistemas distribuidos'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Si `T` es una unión como `A | B`, el tipo condicional evalúa `(A extends U ? X : Y) | (B extends U ? X : Y)`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_5',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo evitas que un tipo condicional sea distributivo al evaluar una unión `T`?',
+      options: [
+        'Envolviendo `T` y `U` entre corchetes: `[T] extends [U] ? X : Y`',
+        'Usando `never`',
+        'Usando `const`',
+        'Con la palabra clave `nodistribute`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Encerrar los operandos entre corchetes `[T] extends [U]` desactiva la distribución sobre uniones.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_6',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué es un Tipo Mapeado (Mapped Type)?',
+      options: [
+        'Un tipo que crea una nueva estructura iterando sobre las claves de un tipo existente: `{ [K in keyof T]: T[K] }`',
+        'Un mapa de la estructura de archivos',
+        'Un objeto de tipo Map de JS',
+        'Un arreglo transformado'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Mapped Types usan la sintaxis `[K in keyof T]` para transformar propiedades de tipos existentes.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cond_7',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo remueves el modificador `readonly` de todas las propiedades en un Mapped Type?',
+      options: [
+        '{ -readonly [K in keyof T]: T[K] }',
+        '{ readonly false [K in keyof T]: T[K] }',
+        '{ mutable [K in keyof T]: T[K] }',
+        '{ [K in keyof T -readonly]: T[K] }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El prefijo `-readonly` elimina la restricción de solo lectura de cada propiedad.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_8',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo remueves el modificador opcional `?` haciendo que todas las propiedades sean requeridas en un Mapped Type?',
+      options: [
+        '{ [K in keyof T]-?: T[K] }',
+        '{ [K in keyof T]!: T[K] }',
+        '{ required [K in keyof T]: T[K] }',
+        '{ [K in keyof T]: T[K] - ? }'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El sufijo `-?` elimina la condición de opcionalidad (así funciona el utility type `Required<T>`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_9',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué es la re-mapeación de claves (Key Remapping) en Mapped Types usando `as`?',
+      options: [
+        'Permite renombrar o filtrar claves durante el mapeo: `{ [K in keyof T as \`get_\${K & string}\`]: T[K] }`',
+        'Cambiar la clave primaria de una base de datos',
+        'Castear un objeto',
+        'Reordenar elementos de una tupla'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La cláusula `as` en Mapped Types permite transformar o filtrar los nombres de las claves generadas.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_10',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo puedes FILTRAR (eliminar) ciertas claves en un Mapped Type usando Key Remapping `as`?',
+      options: [
+        'Haciendo que la expresión `as` evalúe al tipo `never` para las claves que deseas descartar',
+        'Usando `delete`',
+        'Usando `void`',
+        'Con la palabra `omit`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Mapear la clave `as K extends ... ? K : never` elimina la propiedad si evalúa a `never`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_11',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cuál es el resultado de `type IsString<T> = T extends string ? true : false;` cuando `T` es `any`?',
+      options: ['boolean (true | false)', 'true', 'false', 'any'],
+      correctOptionIndex: 0,
+      explanation: 'Cuando `T` es `any`, la condición se evalúa para ambas ramas resultando en la unión `true | false` (es decir, `boolean`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_12',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué sucede si aplicas un tipo condicional a `never`?',
+      options: [
+        'Devuelve `never` inmediatamente sin evaluar la condición (porque `never` es una unión vacía)',
+        'Devuelve `true`',
+        'Devuelve `false`',
+        'Lanza un error de compilación'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`never` actúa como una unión vacía; por distribución, evaluar 0 elementos resulta en `never`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_13',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo implementa internamente TypeScript el utility type `Exclude<T, U>`?',
+      options: [
+        'type Exclude<T, U> = T extends U ? never : T;',
+        'type Exclude<T, U> = T & U;',
+        'type Exclude<T, U> = Omit<T, U>;',
+        'type Exclude<T, U> = T extends U ? T : never;'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Si un miembro `T` se puede asignar a `U`, devuelve `never` (lo elimina), de lo contrario conserva `T`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cond_14',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo implementa internamente TypeScript el utility type `Extract<T, U>`?',
+      options: [
+        'type Extract<T, U> = T extends U ? T : never;',
+        'type Extract<T, U> = T extends U ? never : T;',
+        'type Extract<T, U> = Pick<T, U>;',
+        'type Extract<T, U> = T | U;'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Conserva solo los miembros `T` que extiendan de `U`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cond_15',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué es un Template Literal Type combinado con Mapped Types?',
+      options: [
+        'Permite crear nuevos nombres de propiedades anteponiendo/posponiendo cadenas (ej: `[K in keyof T as \`on\${Capitalize<string & K>}\`]: ...`)',
+        'Imprimir el objeto en HTML',
+        'Convertir objetos a JSON',
+        'Un plugin de Babel'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Permite generar automáticamente nombres de eventos como `onClick`, `onChange` a partir de nombres de propiedades.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_16',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué hace la inferencia recursiva en tipos condicionales?',
+      options: [
+        'Permite resolver estructuras anidadas de profundidad indeterminada (ej. `Awaited<T>` o aplanar arreglos multidimensionales)',
+        'Un bucle infinito en runtime',
+        'Consumir memoria de la tarjeta gráfica',
+        'No está permitida en TypeScript'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los tipos condicionales pueden llamarse a sí mismos recursivamente en sus ramas para procesar tipos anidados complejos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_17',
+      topic: 'tipos_condicionales',
+      prompt: '¿Existe un límite de profundidad de recursión en los tipos de TypeScript?',
+      options: [
+        'Sí, el compilador detiene la recursión de tipos tras sobrepasar cierto límite para prevenir desbordamientos de pila (stack overflow)',
+        'No, es infinito',
+        'Límite de 5 niveles exactos',
+        'Límite de 10000 niveles'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'TypeScript limita el nivel máximo de instanciación recursiva de tipos para asegurar la estabilidad del compilador.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cond_18',
+      topic: 'tipos_condicionales',
+      prompt: '¿Cómo declaras que un valor es sólo de propiedades mutables a partir de `Readonly<T>`?',
+      options: [
+        'type Mutable<T> = { -readonly [P in keyof T]: T[P] };',
+        'type Mutable<T> = Writable<T>;',
+        'type Mutable<T> = UnReadonly<T>;',
+        'type Mutable<T> = delete readonly T;'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El modificador `-readonly` remueve la restricción de solo lectura.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'cond_19',
+      topic: 'tipos_condicionales',
+      prompt: '¿Qué es `NoInfer<T>` introducido en TypeScript 5.4?',
+      options: [
+        'Bloquea la inferencia de tipos en el argumento especificado, obligando a que se infiera desde otros parámetros de la función',
+        'Desactiva los tipos',
+        'Elimina `any`',
+        'Convierte a `never`'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`NoInfer<T>` evita que TypeScript use esa posición específica para deducir el tipo genérico `T`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'cond_20',
+      topic: 'tipos_condicionales',
+      prompt: '¿Para qué sirve la técnica de Homomorphic Mapped Types (Tipos Mapped Homomórficos)?',
+      options: [
+        'Cuando un mapped type itera sobre `keyof T` directamente, conservando automáticamente los modificadores `readonly` y `?` originales de `T`',
+        'Convertir objetos a clases',
+        'Mapear archivos iguales',
+        'Crear enums de objetos'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los mapped types homomórficos (como `Partial<T>` o `Readonly<T>`) preservan modificadores y la estructura subyacente.',
+      difficulty: 'hard',
+    },
+  ],
+
+  // --- SECCIÓN 6: MÓDULOS Y ECOSISTEMA ---
+  modulos_importaciones: [
+    {
+      id: 'modu_1',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué convierte a un archivo en un "Módulo" aislado en TypeScript/JavaScript?',
+      options: [
+        'La presencia de al menos una sentencia `import` o `export` en el archivo',
+        'Guardarlo con extensión `.ts`',
+        'Ponerlo en una carpeta especial',
+        'Usar la palabra `module` al inicio'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Cualquier archivo que contenga un `import` o `export` de nivel superior es tratado como un módulo con ámbito propio.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_2',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué sucede con un archivo que NO tiene ninguna sentencia `import` o `export`?',
+      options: [
+        'Sus variables y tipos se ejecutan en el Ámbito Global (Global Scope)',
+        'Se genera un error de compilación',
+        'Se ignora el archivo',
+        'Se convierte en módulo automáticamente'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Sin `import`/`export`, el contenido del archivo se considera dentro del ámbito global común.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_3',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo importas sólo TIPOS de forma explícita en TypeScript (Type-Only Imports)?',
+      options: [
+        'import type { User } from "./user";',
+        'import { type User } from "./user";',
+        'Ambas son válidas',
+        'import User from type "./user";'
+      ],
+      correctOptionIndex: 2,
+      explanation: 'Tanto `import type { T }` como `import { type T }` son sintaxis válidas para importar tipos garantizando su borrado completo en JS.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_4',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cuál es la ventaja de utilizar `import type`?',
+      options: [
+        'Asegura que la importación no genere ningún `require` o `import` en el JavaScript compilado y evita dependencias circulares de runtime',
+        'Hace la importación más rápida',
+        'Permite importar archivos JSON',
+        'Permite usar variables privadas'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Garantiza la eliminación total de la sentencia de importación en JS, evitando efectos secundarios en tiempo de ejecución.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_5',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo exportas una declaración como Exportación por Defecto (Default Export)?',
+      options: [
+        'export default function miFn() {}',
+        'export function default miFn() {}',
+        'default export miFn;',
+        'module.exports.default = miFn;'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`export default` define la exportación principal por defecto del módulo.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_6',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo importas una exportación por defecto?',
+      options: [
+        'import MiFn from "./miModulo";',
+        'import { MiFn } from "./miModulo";',
+        'import * as MiFn from "./miModulo";',
+        'import default MiFn from "./miModulo";'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Las exportaciones por defecto se importan sin llaves `{}` y pueden renombrarse libremente.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_7',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo re-exportas todo el contenido de otro módulo (Barrel Export)?',
+      options: [
+        'export * from "./otroModulo";',
+        'export all from "./otroModulo";',
+        'import * and export from "./otroModulo";',
+        'export "./otroModulo";'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`export * from "./path"` re-exporta todas las exportaciones nombradas del archivo objetivo.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_8',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué es un archivo "Barrel" (index.ts) en arquitectura de módulos?',
+      options: [
+        'Un archivo `index.ts` centralizador que re-exporta la API pública de una carpeta/módulo para simplificar las rutas de importación',
+        'Un archivo ejecutable binario',
+        'Un archivo de configuración de base de datos',
+        'Un script de despliegue'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Barrel files consolidan exportaciones de múltiples archivos en un solo punto de entrada.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_9',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué hace la directiva `export = objeto;` en TypeScript?',
+      options: [
+        'Sintaxis tradicional de TypeScript para modelar la exportación CommonJS `module.exports = objeto`',
+        'Exporta una constante inmutable',
+        'Exporta solo variables de entorno',
+        'Genera un error en ES6'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`export =` se usa con el formato CommonJS/AMD tradicional y se importa con `import name = require("./path")`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'modu_10',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué bandera de tsconfig permite importar módulos CommonJS usando la sintaxis de ES6 por defecto (`import React from "react"`)?',
+      options: ['esModuleInterop: true', 'allowSyntheticDefaultImports: true', 'Ambas suelen usarse juntas', 'target: esnext'],
+      correctOptionIndex: 2,
+      explanation: '`esModuleInterop` (que habilita `allowSyntheticDefaultImports`) crea helpers para importar paquetes CommonJS como si tuvieran default export.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_11',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo importas todo el contenido de un módulo bajo un alias de objeto?',
+      options: [
+        'import * as Utils from "./utils";',
+        'import Utils from "./utils";',
+        'import { * as Utils } from "./utils";',
+        'import all as Utils from "./utils";'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`import * as Name` agrupa todas las exportaciones nombradas dentro de un único objeto namespace.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_12',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué es el módulo dinámico mediante `import("./modulo").then(...)`?',
+      options: [
+        'Una llamada asíncrona que retorna una Promesa para cargar un módulo en tiempo de ejecución (Code Splitting)',
+        'Una importación de tipo estático',
+        'Un error de rendimiento',
+        'Un plugin de Webpack exclusivo'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'El `import()` dinámico devuelve una Promesa y permite cargar código bajo demanda (lazy loading).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_13',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué es la Aumentación de Módulos (Module Augmentation)?',
+      options: [
+        'La capacidad de extender las declaraciones de tipos de un módulo de terceros existente usando `declare module "nombre-modulo" { ... }`',
+        'Aumentar el tamaño del archivo JS',
+        'Duplicar librerías',
+        'Compilar más rápido'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Permite añadir nuevos tipos o extender interfaces de librerías externas sin modificar su código fuente.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'modu_14',
+      topic: 'modulos_importaciones',
+      prompt: '¿Cómo declaras tipos globales accesibles desde cualquier lugar sin importar en un proyecto?',
+      options: [
+        'Usando un archivo `.d.ts` con `declare global { ... }` o sin imports/exports de nivel superior',
+        'Usando `export global`',
+        'Poniendo todo en `index.js`',
+        'Con el flag `global: true`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los archivos de definición `.d.ts` o los bloques `declare global` expanden los tipos del ámbito global.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_15',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué son los paquetes DefinitelyTyped (`@types/node`, `@types/react`)?',
+      options: [
+        'Un repositorio comunitario centralizado que proporciona definiciones de tipos TypeScript para librerías escritas en JavaScript puro',
+        'El compilador oficial de TS',
+        'Frameworks de React',
+        'Plugins para VS Code'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'DefinitelyTyped provee archivos `.d.ts` comunitarios bajo el scope `@types/` para paquetes JS que no incluyen tipos nativos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_16',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué propiedad del `package.json` le indica a TypeScript dónde encontrar el archivo de definición de tipos principal de un paquete?',
+      options: ['types (o typings)', 'main', 'scripts', 'module'],
+      correctOptionIndex: 0,
+      explanation: 'El campo `"types": "dist/index.d.ts"` en `package.json` especifica el punto de entrada de los tipos del paquete.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_17',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué es Tree Shaking en bundlers modernos?',
+      options: [
+        'El proceso de eliminar código muerto y módulos/exportaciones no utilizados del bundle de producción final',
+        'Reordenar archivos',
+        'Verificar tipos en segundo plano',
+        'Mover código al servidor'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Tree shaking analiza las sentencias `import`/`export` estáticas para descartar el código que no se utiliza.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'modu_18',
+      topic: 'modulos_importaciones',
+      prompt: '¿Por qué los ES Modules (`import`/`export`) permiten mejor Tree Shaking que CommonJS (`require`)?',
+      options: [
+        'Porque las importaciones/exportaciones de ES Modules son estáticas y se analizan en compilación, mientras que `require` es dinámico en runtime',
+        'Porque CommonJS es más viejo',
+        'No hay diferencia',
+        'Porque ES Modules solo funcionan en navegador'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La estructura estática de los ES Modules permite a los empaquetadores determinar con certeza qué exportaciones no se están consumiendo.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'modu_19',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué hace la instrucción `import "./estilos.css";`?',
+      options: [
+        'Ejecuta el archivo especificado únicamente por sus efectos secundarios (Side Effects) sin importar ningún símbolo con nombre',
+        'Importa una variable llamada estilos',
+        'Genera un error en TypeScript puro',
+        'Convierte el CSS a JS'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Un `import` sin especificación de símbolos ejecuta el módulo objetivo por sus efectos secundarios.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'modu_20',
+      topic: 'modulos_importaciones',
+      prompt: '¿Qué valor del flag `moduleResolution` se recomienda para proyectos modernos que usan bundlers como Vite o Webpack?',
+      options: ['bundler (o node16 / nodenext)', 'classic', 'none', 'original'],
+      correctOptionIndex: 0,
+      explanation: '`moduleResolution: "bundler"` modela el comportamiento de resolución de módulos de herramientas modernas como Vite/Webpack/esbuild.',
+      difficulty: 'medium',
+    },
+  ],
+
+  decoradores: [
+    {
+      id: 'dec_1',
+      topic: 'decoradores',
+      prompt: '¿Qué sintaxis se utiliza para aplicar un Decorador en TypeScript?',
+      options: ['@nombreDecorador', '#nombreDecorador', '$nombreDecorador', ':nombreDecorador'],
+      correctOptionIndex: 0,
+      explanation: 'Los decoradores utilizan el símbolo `@` seguido del nombre de la función decoradora.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'dec_2',
+      topic: 'decoradores',
+      prompt: '¿Qué es esencialmente un Decorador en TypeScript/JavaScript?',
+      options: [
+        'Una función especial que recibe como argumento la meta-información del elemento decorado y puede modificarlo o reemplazarlo',
+        'Un estilo CSS',
+        'Un comentario de código',
+        'Una interfaz'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Un decorador es una función que se invoca sobre clases, métodos, propiedades o parámetros para añadir comportamiento o metadatos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'dec_3',
+      topic: 'decoradores',
+      prompt: '¿Qué opción en `tsconfig.json` era requerida históricamente para habilitar los decoradores experimentales (Stage 2)?',
+      options: ['experimentalDecorators: true', 'enableDecorators: true', 'decorators: true', 'target: es5'],
+      correctOptionIndex: 0,
+      explanation: '`experimentalDecorators: true` habilitaba la implementación clásica previa de decoradores en TypeScript.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_4',
+      topic: 'decoradores',
+      prompt: '¿Qué estándar de Decoradores soporta TypeScript 5.0+ de forma nativa sin requerir `experimentalDecorators`?',
+      options: ['La propuesta estándar de ECMAScript Stage 3 Decorators', 'Decoradores de Python', 'Decoradores de Java', 'Stage 1 Decorators'],
+      correctOptionIndex: 0,
+      explanation: 'TypeScript 5.0 introdujo soporte completo para la especificación estándar oficial de Decoradores de JS (Stage 3).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_5',
+      topic: 'decoradores',
+      prompt: '¿Qué es una Fábrica de Decoradores (Decorator Factory)?',
+      options: [
+        'Una función que retorna la función decoradora real, permitiendo pasar parámetros al decorador `@log("mi_param")`',
+        'Una clase que crea decoradores',
+        'Un generador de código',
+        'Un archivo de configuración'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Una fábrica de decoradores es una función que envuelve al decorador y devuelve la función receptora para aceptar argumentos personalizables.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_6',
+      topic: 'decoradores',
+      prompt: '¿En qué elementos se pueden aplicar Decoradores según la propuesta de Stage 3?',
+      options: [
+        'Clases, métodos de clase, accesores (get/set), propiedades de clase y campos de clase',
+        'Solo en clases',
+        'Solo en funciones independientes',
+        'En variables locales y bloques if'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los decoradores aplican a elementos dentro del ámbito de definición de clases.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_7',
+      topic: 'decoradores',
+      prompt: '¿Se pueden aplicar decoradores a funciones independientes fuera de una clase (ej. `function hola()`)?',
+      options: [
+        'No, los decoradores en la especificación de JS/TS solo aplican a clases y a sus miembros',
+        'Sí, en cualquier función',
+        'Solo si son asíncronas',
+        'Solo en React'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los decoradores estándar están diseñados exclusivamente para clases y sus miembros.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'dec_8',
+      topic: 'decoradores',
+      prompt: '¿En qué momento se ejecutan las funciones Decoradoras?',
+      options: [
+        'Una sola vez cuando la Clase es evaluada y definida por el motor de JavaScript (en tiempo de carga del módulo)',
+        'Cada vez que se crea una instancia de la clase',
+        'Cada vez que se llama al método decorado',
+        'En tiempo de compilación de TS'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los decoradores se ejecutan inmediatamente cuando la clase es declarada e interpretada por el runtime.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_9',
+      topic: 'decoradores',
+      prompt: '¿En qué orden se EVALÚAN los decoradores cuando se aplican múltiples a un mismo elemento `@dec1 @dec2 me()`?',
+      options: [
+        'Las expresiones de las fábricas se evalúan de arriba a abajo, pero los decoradores resultantes se aplican de abajo hacia arriba (de derecha a izquierda)',
+        'De izquierda a derecha siempre',
+        'En orden alfabético',
+        'En orden aleatorio'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La composición de decoradores se evalúa de arriba a abajo y se ejecuta de abajo a arriba (como la composición de funciones `f(g(x))`).',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_10',
+      topic: 'decoradores',
+      prompt: '¿Qué es el paquete `reflect-metadata` usado con decoradores experimentales?',
+      options: [
+        'Una librería polyfill que permite añadir y leer metadatos de tipos de TypeScript en tiempo de ejecución',
+        'Un compilador alternativo',
+        'Un linter de código',
+        'Una base de datos'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`reflect-metadata` almacena metadatos de tipos emitidos por TS para usarse por frameworks como NestJS o TypeORM.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_11',
+      topic: 'decoradores',
+      prompt: '¿Qué opción de tsconfig emitida junto a `experimentalDecorators` emitía metadatos de tipos de diseño (design:type, design:paramtypes)?',
+      options: ['emitDecoratorMetadata: true', 'metadata: true', 'reflectTypes: true', 'sourceMap: true'],
+      correctOptionIndex: 0,
+      explanation: '`emitDecoratorMetadata: true` instruye al compilador a incluir tipos TypeScript en tiempo de ejecución para reflexiones de metadatos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_12',
+      topic: 'decoradores',
+      prompt: '¿Qué argumentos recibe un Decorador de Clase en Stage 3 estándar?',
+      options: [
+        'target (la clase misma) y context (objeto ClassDecoratorContext)',
+        'target, key, descriptor',
+        'solo el nombre de la clase',
+        'ningún argumento'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los nuevos decoradores Stage 3 reciben el valor objetivo (`target`) y un objeto `context` con información de metadatos del elemento.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_13',
+      topic: 'decoradores',
+      prompt: '¿Para qué sirve popularmente el framework NestJS con respecto a Decoradores?',
+      options: [
+        'Para definir rutas de controladores, inyección de dependencias y validaciones mediante decoradores como `@Controller()`, `@Get()`, `@Injectable()`',
+        'Para crear aplicaciones móviles',
+        'Para estilizar componentes UI',
+        'Para manejar bases de datos SQL puras'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'NestJS hace uso intensivo de decoradores para arquitectura backend orientada a inyección de dependencias.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'dec_14',
+      topic: 'decoradores',
+      prompt: '¿Qué puede hacer un Decorador de Método?',
+      options: [
+        'Interceptar la llamada al método, modificar sus argumentos, envolver su ejecución o reemplazar el método por completo',
+        'Cambiar la velocidad del procesador',
+        'Convertir el método a privado',
+        'Eliminar la clase'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los decoradores de método permiten envolver la función original con lógica adicional (ej: logging, medición de tiempo, validación).',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_15',
+      topic: 'decoradores',
+      prompt: '¿Qué es el campo `accessor` introducido en ES Decorators (`accessor prop: string;`)?',
+      options: [
+        'Una propiedad auto-accessor que genera automáticamente un getter, un setter y un campo privado respaldatorio, facilitando su decoración',
+        'Un accesor privado',
+        'Un atajo de teclado',
+        'Un tipo de interface'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'La sintaxis `accessor` simplifica la creación de propiedades observables con getters/setters implícitos.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_16',
+      topic: 'decoradores',
+      prompt: '¿Cómo decoras un método para medir cuánto tiempo tarda su ejecución?',
+      options: [
+        'Creando un decorador de método que envuelva la función original midiendo `performance.now()` antes y después del `apply()`',
+        'Usando `@time`',
+        'Usando `console.log`',
+        'No es posible'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Es uno de los usos típicos de decoradores: interceptar la invocación para medir métricas de tiempo.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'dec_17',
+      topic: 'decoradores',
+      prompt: '¿Se pueden usar Decoradores en TypeScript para validación de esquemas (ej: `class-validator`)?',
+      options: [
+        'Sí, decoradores como `@IsEmail()`, `@IsNumber()` registran reglas de validación en los metadatos de las propiedades de la clase',
+        'No, la validación solo se hace en HTML',
+        'Solo en bases de datos',
+        'Solo con express'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Librerías como `class-validator` inspeccionan los metadatos asignados por decoradores para validar objetos DTO.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'dec_18',
+      topic: 'decoradores',
+      prompt: '¿Qué retorna un decorador de clase si desea reemplazar por completo la clase decorada?',
+      options: [
+        'Una nueva función constructora o clase que extiende o sustituye a la original',
+        'Un objeto booleano `true`',
+        'Un string con el código JS',
+        '`null`'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Si un decorador de clase retorna una nueva función constructora, esta reemplaza la declaración original de la clase.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_19',
+      topic: 'decoradores',
+      prompt: '¿Qué objeto contiene información contextual como el nombre del miembro decorado en los decoradores Stage 3?',
+      options: ['El parámetro `context` (ej. `context.name`, `context.kind`)', 'window.context', 'process.env', 'this.meta'],
+      correctOptionIndex: 0,
+      explanation: 'El objeto `context` provisto en el nuevo estándar contiene `kind`, `name`, `static`, `private`, `access` y `addInitializer`.',
+      difficulty: 'hard',
+    },
+    {
+      id: 'dec_20',
+      topic: 'decoradores',
+      prompt: '¿Para qué sirve el método `addInitializer` disponible en el `context` de un decorador Stage 3?',
+      options: [
+        'Permite registrar funciones de inicialización que se ejecutarán durante la instanciación del objeto o evaluación de la clase',
+        'Inicia el servidor backend',
+        'Crea el archivo package.json',
+        'Formatea el código'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`context.addInitializer` permite ejecutar código de configuración personalizado en el momento de creación.',
+      difficulty: 'hard',
+    },
+  ],
+
+  tsconfig: [
+    {
+      id: 'tsconfig_1',
+      topic: 'tsconfig',
+      prompt: '¿Cuál es el nombre del archivo estándar de configuración del proyecto en TypeScript?',
+      options: ['tsconfig.json', 'ts-config.js', 'typescript.config', 'package.json'],
+      correctOptionIndex: 0,
+      explanation: '`tsconfig.json` es el archivo que especifica la raíz del proyecto y las opciones de compilación.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_2',
+      topic: 'tsconfig',
+      prompt: '¿Qué comando de la CLI de TypeScript genera un archivo `tsconfig.json` inicial repleto de opciones comentadas?',
+      options: ['tsc --init', 'tsc init', 'npx tsconfig-create', 'typescript --start'],
+      correctOptionIndex: 0,
+      explanation: '`tsc --init` crea un nuevo archivo de configuración con opciones predeterminadas útiles.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_3',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"strict": true` en `compilerOptions`?',
+      options: [
+        'Habilita una amplia gama de comportamientos estrictos de comprobación de tipos (`noImplicitAny`, `strictNullChecks`, etc.)',
+        'Hace que el código sea de solo lectura',
+        'Obliga a usar el compilador estricto de C++',
+        'Prohíbe usar librerías externas'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`"strict": true` es el flag maestro que activa las mejores prácticas y comprobaciones más rigurosas del sistema de tipos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_4',
+      topic: 'tsconfig',
+      prompt: '¿Qué especifica la opción `"target"` (ej: `"target": "ES2020"`)?',
+      options: [
+        'La versión del lenguaje JavaScript a la que TypeScript transpilará el código de salida',
+        'El sistema operativo objetivo',
+        'El navegador donde correrá el código',
+        'La versión de Node.js instalada'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`target` determina a qué versión de ECMAScript se transpilante las características modernas del código.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_5',
+      topic: 'tsconfig',
+      prompt: '¿Qué especifica la opción `"module"` (ej: `"module": "CommonJS"` o `"ESNext"`)?',
+      options: [
+        'El sistema de código de módulos que se generará en los archivos JS resultantes (ej. `require` vs `import`)',
+        'El nombre del proyecto',
+        'Los módulos de npm a instalar',
+        'El archivo principal de entrada'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`module` controla el formato de módulos emitido (`CommonJS`, `ESNext`, `AMD`, `System`, etc.).',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_6',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"outDir"` (ej: `"outDir": "./dist"`)?',
+      options: [
+        'Especifica la carpeta de salida donde se guardarán los archivos JavaScript compilados',
+        'Especifica dónde están los archivos `.ts` de origen',
+        'Elimina los archivos de entrada',
+        'Configura el directorio temporal'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`outDir` redirige todos los archivos `.js` y `.d.ts` emitidos a una estructura dentro de la carpeta destino.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_7',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"rootDir"` (ej: `"rootDir": "./src"`)?',
+      options: [
+        'Especifica la carpeta raíz de los archivos fuente TypeScript para que la estructura de carpetas se replique limpiamente en `outDir`',
+        'La raíz del sistema de archivos',
+        'La ubicación de node_modules',
+        'La carpeta del usuario'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`rootDir` controla la jerarquía de carpetas fuente que se reflejará al compilar en el directorio de salida.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_8',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"noImplicitAny": true`?',
+      options: [
+        'Arroja un error de compilación cuando TypeScript no puede inferir un tipo y la variable queda implícitamente como `any`',
+        'Elimina la palabra `any` del lenguaje',
+        'Convierte los `any` en `unknown` automáticamente',
+        'Permite any sin advertencias'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Obliga al desarrollador a anotar tipos explícitamente cuando TypeScript no puede deducirlos.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_9',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"strictNullChecks": true`?',
+      options: [
+        'Hace que `null` y `undefined` sean tipos distintos y no asignables a otros tipos a menos que se especifique una unión explícita',
+        'Elimina el valor null',
+        'Verifica que las variables no sean nulas en tiempo de ejecución',
+        'Convierte null en 0'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Evita una inmensa categoría de errores runtime ("Cannot read property of undefined") exigiendo manejo explícito de valores nulos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_10',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"noEmit": true`?',
+      options: [
+        'Indica a `tsc` que ejecute únicamente la comprobación de tipos sin generar ningún archivo `.js` de salida (ideal en bundlers como Vite)',
+        'No emite errores por consola',
+        'Elimina los archivos del proyecto',
+        'No emite señales de red'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`noEmit` usa el compilador como un simple linter/checker de tipos sin escribir archivos compilados al disco.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_11',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"declaration": true`?',
+      options: [
+        'Genera archivos de definición de tipos `.d.ts` correspondientes a cada archivo JavaScript emitido',
+        'Declara variables globales',
+        'Crea el archivo README.md',
+        'Exporta el proyecto a npm'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Es esencial para librerías que desean distribuir sus tipos para ser consumidos por otros proyectos.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_12',
+      topic: 'tsconfig',
+      prompt: '¿Qué especifican `"include"` y `"exclude"` a nivel raíz de `tsconfig.json`?',
+      options: [
+        '`include` define patrones de archivos a incluir en la compilación; `exclude` especifica qué archivos ignorar (como `node_modules` o `dist`)',
+        'Modificadores de variables',
+        'Librerías de CSS',
+        'Rutas de servidores'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Filtran qué archivos del sistema forman parte del programa analizado por TypeScript.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_13',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la configuración `"paths"` dentro de `compilerOptions` (ej: `"@/*": ["./src/*"]`)?',
+      options: [
+        'Permite configurar Alias de Rutas (Path Aliases) para evitar importaciones relativas largas como `../../components`',
+        'Modifica la variable PATH del sistema operativo',
+        'Configura rutas de Express.js',
+        'Redirige URLs de imágenes'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`paths` mapea prefijos de importación limpios a ubicaciones específicas en el disco.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_14',
+      topic: 'tsconfig',
+      prompt: '¿Qué otra propiedad de `compilerOptions` debe configurarse junto a `paths` para que los Alias funcionen correctamente?',
+      options: ['baseUrl', 'rootDir', 'target', 'outDir'],
+      correctOptionIndex: 0,
+      explanation: '`baseUrl` establece el directorio base a partir del cual se resuelven las rutas no relativas mapeadas en `paths`.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_15',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"lib"` (ej: `"lib": ["Dom", "ES2020"]`)?',
+      options: [
+        'Especifica las librerías de tipos integradas que TypeScript debe incluir automáticamente en el entorno (como tipos del DOM `window`, `document` o APIs de ES2020)',
+        'Instala paquetes de npm',
+        'Carga librerías de C++',
+        'Genera librerías dinámicas'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`lib` le enseña al compilador qué APIs globales (browser DOM, Node, ES Features) están disponibles en el entorno de ejecución.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_16',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"skipLibCheck": true`?',
+      options: [
+        'Omite la comprobación de tipos de todos los archivos de definición `.d.ts` (como los de `node_modules`), acelerando enormemente la compilación',
+        'Omite comprobar todo el código fuente',
+        'Ignora las librerías de C#',
+        'Elimina las dependencias'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`skipLibCheck` evita volver a verificar archivos `.d.ts` ya compilados de terceros, reduciendo tiempos de build.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_17',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"sourceMap": true`?',
+      options: [
+        'Genera archivos `.js.map` que mapean el código ejecutable JS de vuelta a las líneas originales en TS, permitiendo depuración directa en el navegador',
+        'Crea un mapa interactivo del proyecto',
+        'Genera diagramas UML',
+        'Aumenta la velocidad de ejecución'
+      ],
+      correctOptionIndex: 0,
+      explanation: 'Los Source Maps facilitan poner breakpoints e inspeccionar el código `.ts` original en las DevTools del navegador.',
+      difficulty: 'easy',
+    },
+    {
+      id: 'tsconfig_18',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"extends"` a nivel raíz de `tsconfig.json`?',
+      options: [
+        'Permite heredar la configuración de otro archivo `tsconfig` base (ej: `"extends": "@tsconfig/node18/tsconfig.json"`)',
+        'Extiende la memoria del compilador',
+        'Agrega plugins a VS Code',
+        'Crea subclases'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`extends` permite compartir y modularizar configuraciones base de TS recomendadas por la comunidad.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_19',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"jsx"` (ej: `"jsx": "react-jsx"`)?',
+      options: [
+        'Controla cómo se transpilación las sintaxis JSX en archivos `.tsx` (ej: a `React.createElement` o al nuevo JSX runtime de React 17+)',
+        'Habilita HTML en archivos .ts',
+        'Compila Vue a React',
+        'No afecta a React'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`jsx` especifica el emisor y transformación aplicable a los elementos JSX.',
+      difficulty: 'medium',
+    },
+    {
+      id: 'tsconfig_20',
+      topic: 'tsconfig',
+      prompt: '¿Qué hace la opción `"isolatedModules": true`?',
+      options: [
+        'Asegura que cada archivo pueda transpirarse de forma totalmente independiente por transpileres archivo por archivo como Babel, Vite o esbuild sin requerir análisis global de tipos',
+        'Aísla el proyecto de internet',
+        'Impide importar archivos',
+        'Ejecuta el código en un Sandbox web'
+      ],
+      correctOptionIndex: 0,
+      explanation: '`isolatedModules` advierte sobre patrones de TypeScript (como `const enum` o re-exportaciones de tipos ambiguas) que fallan al compilarse mediante transpiladores de archivo único.',
+      difficulty: 'hard',
+    },
+  ],
+};

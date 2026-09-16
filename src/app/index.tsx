@@ -12,26 +12,58 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AntigravityEngine, UserProfile } from '@/engine/AntigravityEngine';
+import { AntigravityEngine, UserProfile, engine } from '@/engine/AntigravityEngine';
 
-// Singleton engine para toda la sesión
-export const engine = new AntigravityEngine('Estudiante');
-
-const MODULES = [
-  { title: 'Tipos Básicos en TypeScript', topic: 'Tipos en TypeScript' },
-  { title: 'Interfaces y Tipos', topic: 'Interfaces TypeScript' },
-  { title: 'Clases y POO', topic: 'Programación Orientada a Objetos' },
-  { title: 'Genéricos', topic: 'Generics TypeScript' },
-  { title: 'Funciones Avanzadas', topic: 'Funciones TypeScript' },
+const SECTIONS = [
+  {
+    title: '1. Fundamentos de TypeScript',
+    modules: [
+      { title: 'Tipos Primitivos', topic: 'tipos_primitivos' },
+      { title: 'Variables y Constantes', topic: 'variables_constantes' },
+      { title: 'Arrays y Tuplas', topic: 'arrays_tuplas' },
+    ],
+  },
+  {
+    title: '2. Tipos Compuestos',
+    modules: [
+      { title: 'Interfaces', topic: 'interfaces' },
+      { title: 'Type Aliases y Uniones', topic: 'type_aliases' },
+      { title: 'Enums', topic: 'enums' },
+    ],
+  },
+  {
+    title: '3. Funciones',
+    modules: [
+      { title: 'Tipado de Funciones', topic: 'tipado_funciones' },
+      { title: 'Funciones Flecha y Callbacks', topic: 'funciones_flecha' },
+      { title: 'Sobrecarga de Funciones', topic: 'sobrecarga_funciones' },
+    ],
+  },
+  {
+    title: '4. Programación Orientada a Objetos',
+    modules: [
+      { title: 'Clases y Constructores', topic: 'clases_constructores' },
+      { title: 'Herencia y Polimorfismo', topic: 'herencia_polimorfismo' },
+      { title: 'Modificadores de Acceso', topic: 'modificadores_acceso' },
+    ],
+  },
+  {
+    title: '5. Tipos Avanzados',
+    modules: [
+      { title: 'Genéricos', topic: 'genericos' },
+      { title: 'Utility Types', topic: 'utility_types' },
+      { title: 'Tipos Condicionales y Mapped', topic: 'tipos_condicionales' },
+    ],
+  },
+  {
+    title: '6. Módulos y Ecosistema',
+    modules: [
+      { title: 'Módulos e Importaciones', topic: 'modulos_importaciones' },
+      { title: 'Decoradores', topic: 'decoradores' },
+      { title: 'Configuración tsconfig', topic: 'tsconfig' },
+    ],
+  },
 ];
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <Text style={[styles.heart, filled ? styles.heartFilled : styles.heartEmpty]}>
-      {filled ? '❤️' : '🖤'}
-    </Text>
-  );
-}
 
 function PulseAnimation({ children }: { children: React.ReactNode }) {
   const scale = useRef(new Animated.Value(1)).current;
@@ -67,14 +99,11 @@ export default function HomeScreen() {
 
   const refreshProfile = () => setProfile(engine.getUserProfile());
 
-  const handleStartModule = async (moduleIndex: number) => {
-    const mod = MODULES[moduleIndex];
-    await engine.loadSession(mod.title, mod.topic);
+  const handleStartModule = async (mod: { title: string; topic: string }, isAiGenerated: boolean = false) => {
+    await engine.loadSession(mod.title, mod.topic, isAiGenerated);
     refreshProfile();
     router.push('/quiz');
   };
-
-  const livesArray = Array.from({ length: profile.maxLives }, (_, i) => i < profile.lives);
 
   return (
     <View style={styles.bg}>
@@ -136,31 +165,70 @@ export default function HomeScreen() {
 
             {/* Lives */}
             <View style={styles.livesCard}>
-              <Text style={styles.livesTitle}>❤️ Vidas disponibles: {profile.lives}/{profile.maxLives}</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.heartsScroll}>
-                <View style={styles.heartsRow}>
-                  {livesArray.map((filled, i) => (
-                    <HeartIcon key={i} filled={filled} />
-                  ))}
+              <View style={styles.livesRowSingle}>
+                <Text style={styles.heartSingle}>❤️</Text>
+                <View style={styles.livesInfo}>
+                  <Text style={styles.livesTitle}>Vidas disponibles: {profile.lives} / {profile.maxLives}</Text>
+                  {profile.lives < profile.maxLives ? (
+                    <Text style={styles.livesRestoreHint}>⏱ Las vidas se restauran en 1 hora</Text>
+                  ) : (
+                    <Text style={styles.livesRestoreHint}>Vidas al máximo</Text>
+                  )}
                 </View>
-              </ScrollView>
-              {profile.lives < profile.maxLives && (
-                <Text style={styles.livesRestoreHint}>⏱ Las vidas se restauran en 1 hora</Text>
-              )}
+              </View>
             </View>
 
-            {/* Modules */}
-            <Text style={styles.sectionTitle}>📚 Módulos de Aprendizaje</Text>
-            {MODULES.map((mod, index) => (
-              <ModuleCard
-                key={index}
-                index={index}
-                title={mod.title}
-                topic={mod.topic}
-                disabled={profile.lives <= 0}
-                onPress={() => handleStartModule(index)}
-              />
+            {/* Modules by Sections */}
+            {SECTIONS.map((section, secIndex) => (
+              <View key={secIndex} style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+                {section.modules.map((mod, index) => (
+                  <ModuleCard
+                    key={`${secIndex}-${index}`}
+                    index={index}
+                    title={mod.title}
+                    topic={mod.topic}
+                    disabled={profile.lives <= 0}
+                    onPress={() => handleStartModule(mod, false)}
+                  />
+                ))}
+              </View>
             ))}
+
+            {/* Section 7: Ejercicios Personalizados (IA) */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>7. Ejercicios Personalizados (IA)</Text>
+              {Object.entries(profile.analytics.topicErrorCount).length > 0 ? (
+                Object.entries(profile.analytics.topicErrorCount).map(([topic, count], index) => {
+                  const topicName = topic.replace(/_/g, ' ');
+                  const title = `${topicName.charAt(0).toUpperCase() + topicName.slice(1)} (${count} fallo${count > 1 ? 's' : ''})`;
+                  return (
+                    <ModuleCard
+                      key={`ai-custom-${index}`}
+                      index={index}
+                      title={title}
+                      topic={topic}
+                      disabled={profile.lives <= 0}
+                      onPress={() => handleStartModule({ title: `IA: ${title}`, topic }, true)}
+                    />
+                  );
+                })
+              ) : (
+                <View style={styles.aiEmptyCard}>
+                  <Text style={styles.aiEmptyTitle}>🤖 Sin áreas de oportunidad registradas</Text>
+                  <Text style={styles.aiEmptyText}>
+                    A medida que resuelvas módulos y cometas algunos errores, la IA detectará tus temas débiles y creará ejercicios de refuerzo personalizados aquí.
+                  </Text>
+                  <Pressable
+                    style={styles.aiPracticeBtn}
+                    onPress={() => handleStartModule({ title: 'Práctica Libre de Refuerzo IA', topic: 'tipos_primitivos' }, true)}
+                    disabled={profile.lives <= 0}
+                  >
+                    <Text style={styles.aiPracticeBtnText}>⚡ Generar Práctica de Prueba con IA</Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
 
             <View style={{ height: 40 }} />
           </Animated.View>
@@ -184,7 +252,6 @@ function ModuleCard({
   onPress: () => void;
 }) {
   const scale = useRef(new Animated.Value(1)).current;
-  const icons = ['🧩', '📐', '🏗️', '🔧', '🚀'];
 
   const handlePressIn = () => {
     Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
@@ -205,11 +272,10 @@ function ModuleCard({
         accessibilityLabel={`Iniciar módulo ${title}`}
       >
         <View style={styles.moduleIcon}>
-          <Text style={styles.moduleIconText}>{icons[index % icons.length]}</Text>
+          <Text style={styles.moduleIconText}>{index + 1}</Text>
         </View>
         <View style={styles.moduleInfo}>
           <Text style={[styles.moduleTitle, disabled && styles.textMuted]}>{title}</Text>
-          <Text style={[styles.moduleTopic, disabled && styles.textMuted]}>{topic}</Text>
         </View>
         <Text style={styles.moduleArrow}>{disabled ? '🔒' : '▶'}</Text>
       </Pressable>
@@ -343,32 +409,30 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     gap: 10,
   },
+  livesRowSingle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  heartSingle: {
+    fontSize: 28,
+  },
+  livesInfo: {
+    flex: 1,
+    gap: 2,
+  },
   livesTitle: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 15,
   },
-  heartsScroll: {
-    flexGrow: 0,
-  },
-  heartsRow: {
-    flexDirection: 'row',
-    gap: 4,
-    flexWrap: 'wrap',
-  },
-  heart: {
-    fontSize: 20,
-  },
-  heartFilled: {
-    opacity: 1,
-  },
-  heartEmpty: {
-    opacity: 0.35,
-  },
   livesRestoreHint: {
     color: '#9CA3AF',
     fontSize: 12,
     fontStyle: 'italic',
+  },
+  sectionContainer: {
+    marginBottom: 24,
   },
   sectionTitle: {
     color: '#fff',
@@ -400,7 +464,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   moduleIconText: {
-    fontSize: 24,
+    fontSize: 16,
+    fontWeight: '800',
+    color: PURPLE_LIGHT,
   },
   moduleInfo: {
     flex: 1,
@@ -422,5 +488,36 @@ const styles = StyleSheet.create({
   },
   textMuted: {
     color: '#6B7280',
+  },
+  aiEmptyCard: {
+    backgroundColor: CARD_BG,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    padding: 18,
+    gap: 10,
+  },
+  aiEmptyTitle: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 15,
+  },
+  aiEmptyText: {
+    color: '#9CA3AF',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  aiPracticeBtn: {
+    backgroundColor: PURPLE,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  aiPracticeBtnText: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
   },
 });

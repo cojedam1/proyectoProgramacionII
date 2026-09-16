@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { engine } from './index';
-import { Question, UserProfile } from '@/engine/AntigravityEngine';
+import { Question, UserProfile, engine } from '@/engine/AntigravityEngine';
 
 type AnswerState = 'unanswered' | 'correct' | 'incorrect';
 
@@ -149,9 +148,7 @@ export default function QuizScreen() {
               <Text style={styles.backText}>← Inicio</Text>
             </Pressable>
             <View style={styles.livesRow}>
-              {livesArray.slice(0, 5).map((f, i) => (
-                <Text key={i} style={[styles.miniHeart, { opacity: f ? 1 : 0.25 }]}>❤️</Text>
-              ))}
+              <Text style={styles.miniHeart}>❤️</Text>
               <Text style={styles.livesCount}>{livesLeft}</Text>
             </View>
           </View>

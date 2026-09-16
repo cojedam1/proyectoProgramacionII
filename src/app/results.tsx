@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { engine } from './index';
+import { engine } from '@/engine/AntigravityEngine';
 
 export default function ResultsScreen() {
   const router = useRouter();
