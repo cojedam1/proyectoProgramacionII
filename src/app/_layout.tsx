@@ -24,7 +24,11 @@ export default function TabLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="explore" />
 
-        {/* Full-screen quiz and results */}
+        {/* Full-screen theory, quiz and results */}
+        <Stack.Screen
+          name="theory"
+          options={{ animation: 'slide_from_right' }}
+        />
         <Stack.Screen
           name="quiz"
           options={{ animation: 'slide_from_right' }}

@@ -265,7 +265,7 @@ function OptionButton({
   const isCorrect = index === correctIndex;
   const isAnswered = answerState !== 'unanswered';
 
-  let cardStyle = styles.optionCard;
+  let cardStyle: any = styles.optionCard;
   let textStyle = styles.optionText;
   let letterBg = '#2D1B69';
 
@@ -277,7 +277,7 @@ function OptionButton({
       cardStyle = { ...styles.optionCard, ...styles.optionWrong };
       letterBg = '#EF4444';
     } else {
-      cardStyle = { ...styles.optionCard, opacity: 0.5 };
+      cardStyle = [styles.optionCard, { opacity: 0.5 }];
     }
   } else if (selected) {
     cardStyle = { ...styles.optionCard, ...styles.optionSelected };

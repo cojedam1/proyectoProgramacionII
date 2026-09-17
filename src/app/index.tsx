@@ -181,7 +181,16 @@ export default function HomeScreen() {
             {/* Modules by Sections */}
             {SECTIONS.map((section, secIndex) => (
               <View key={secIndex} style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{section.title}</Text>
+                <View style={styles.sectionHeaderRow}>
+                  <Text style={styles.sectionTitle}>{section.title}</Text>
+                  <Pressable
+                    onPress={() => router.push({ pathname: '/theory', params: { topic: section.modules[0].topic } })}
+                    style={styles.sectionTheoryHeaderBtn}
+                  >
+                    <Text style={styles.sectionTheoryHeaderBtnText}>📖 Teoría de la Sección</Text>
+                  </Pressable>
+                </View>
+
                 {section.modules.map((mod, index) => (
                   <ModuleCard
                     key={`${secIndex}-${index}`}
@@ -190,6 +199,7 @@ export default function HomeScreen() {
                     topic={mod.topic}
                     disabled={profile.lives <= 0}
                     onPress={() => handleStartModule(mod, false)}
+                    onTheoryPress={() => router.push({ pathname: '/theory', params: { topic: mod.topic } })}
                   />
                 ))}
               </View>
@@ -210,6 +220,7 @@ export default function HomeScreen() {
                       topic={topic}
                       disabled={profile.lives <= 0}
                       onPress={() => handleStartModule({ title: `IA: ${title}`, topic }, true)}
+                      onTheoryPress={() => router.push({ pathname: '/theory', params: { topic } })}
                     />
                   );
                 })
@@ -244,17 +255,19 @@ function ModuleCard({
   topic,
   disabled,
   onPress,
+  onTheoryPress,
 }: {
   index: number;
   title: string;
   topic: string;
   disabled: boolean;
   onPress: () => void;
+  onTheoryPress: () => void;
 }) {
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
-    Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
+    Animated.spring(scale, { toValue: 0.98, useNativeDriver: true }).start();
   };
   const handlePressOut = () => {
     Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
@@ -262,23 +275,35 @@ function ModuleCard({
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        disabled={disabled}
-        style={[styles.moduleCard, disabled && styles.moduleCardDisabled]}
-        accessibilityRole="button"
-        accessibilityLabel={`Iniciar módulo ${title}`}
-      >
+      <View style={[styles.moduleCard, disabled && styles.moduleCardDisabled]}>
         <View style={styles.moduleIcon}>
           <Text style={styles.moduleIconText}>{index + 1}</Text>
         </View>
         <View style={styles.moduleInfo}>
           <Text style={[styles.moduleTitle, disabled && styles.textMuted]}>{title}</Text>
+          <Text style={styles.moduleTopicSub}>Subsección: {topic.replace(/_/g, ' ')}</Text>
         </View>
-        <Text style={styles.moduleArrow}>{disabled ? '🔒' : '▶'}</Text>
-      </Pressable>
+        <View style={styles.moduleActionsRow}>
+          <Pressable
+            onPress={onTheoryPress}
+            style={styles.theoryBadgeBtn}
+            accessibilityLabel={`Leer teoría de ${title}`}
+          >
+            <Text style={styles.theoryBadgeText}>📖 Teoría</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            disabled={disabled}
+            style={styles.quizStartBtn}
+            accessibilityLabel={`Iniciar ejercicios de ${title}`}
+          >
+            <Text style={styles.quizStartText}>{disabled ? '🔒' : '▶ Quiz'}</Text>
+          </Pressable>
+        </View>
+      </View>
     </Animated.View>
   );
 }
@@ -434,48 +459,101 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginBottom: 24,
   },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
   sectionTitle: {
     color: '#fff',
     fontWeight: '800',
-    fontSize: 18,
-    marginBottom: 14,
+    fontSize: 17,
     letterSpacing: 0.2,
+    flex: 1,
+  },
+  sectionTheoryHeaderBtn: {
+    backgroundColor: '#251749',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+  },
+  sectionTheoryHeaderBtnText: {
+    color: PURPLE_LIGHT,
+    fontSize: 12,
+    fontWeight: '700',
   },
   moduleCard: {
     backgroundColor: CARD_BG,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: CARD_BORDER,
-    padding: 16,
+    padding: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
     marginBottom: 12,
   },
   moduleCardDisabled: {
     opacity: 0.5,
   },
   moduleIcon: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: 14,
     backgroundColor: '#2D1B69',
     alignItems: 'center',
     justifyContent: 'center',
   },
   moduleIconText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: PURPLE_LIGHT,
   },
   moduleInfo: {
     flex: 1,
-    gap: 3,
+    gap: 2,
   },
   moduleTitle: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: 14,
+  },
+  moduleTopicSub: {
+    color: '#9CA3AF',
+    fontSize: 11,
+    textTransform: 'capitalize',
+  },
+  moduleActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  theoryBadgeBtn: {
+    backgroundColor: '#26194C',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#3D2975',
+  },
+  theoryBadgeText: {
+    color: '#C4B5FD',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  quizStartBtn: {
+    backgroundColor: PURPLE,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  quizStartText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '800',
   },
   moduleTopic: {
     color: '#9CA3AF',
