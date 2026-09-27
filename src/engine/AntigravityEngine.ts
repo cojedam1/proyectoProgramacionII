@@ -34,42 +34,130 @@ export interface SessionModule {
   title: string;
   topic: string;
   isUnlocked: boolean;
+  isAiGenerated?: boolean;
   questions: Question[];
 }
 
 import { questionBank } from '@/data/questionBank';
 
-// --- SERVICIO DE INTELIGENCIA ARTIFICIAL (IA) ---
+// --- AI SERVICE ---
 
 export class AIService {
-  // Genera preguntas (vía IA o banco de preguntas)
+  private static getApiKey(): string | undefined {
+    return process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+  }
+
+  // Generates questions via Gemini API or local question bank
   public static async generateSessionQuestions(topic: string, isAiGenerated: boolean = false): Promise<Question[]> {
     if (isAiGenerated) {
-      return this.generateAiQuestionsForTopic(topic);
+      return this.generateAiQuestionsForTopic(topic, 5);
     }
 
     let questions = questionBank[topic] || [];
 
     if (questions.length === 0) {
-      return this.generateAiQuestionsForTopic(topic);
+      return this.generateAiQuestionsForTopic(topic, 5);
     }
 
     return questions;
   }
 
-  // Generador de ejercicios personalizados de IA adaptados al tema
-  public static generateAiQuestionsForTopic(topic: string): Question[] {
+  // Calls Gemini API with model fallback chain; falls back to local bank on failure
+  public static async generateAiQuestionsForTopic(topic: string, count: number = 5): Promise<Question[]> {
+    const apiKey = this.getApiKey();
+
+    if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('tu_api_key')) {
+      try {
+        const formattedTopic = topic.replace(/_/g, ' ');
+        const promptText = `Eres un tutor experto en TypeScript. Genera exactamente ${count} preguntas de opción múltiple para el tema "${formattedTopic}".
+Genera un arreglo JSON con exactamente la siguiente estructura:
+[
+  {
+    "prompt": "Enunciado claro de la pregunta",
+    "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
+    "correctOptionIndex": 0,
+    "explanation": "Explicación concisa y educativa",
+    "difficulty": "medium"
+  }
+]
+Condiciones:
+- correctOptionIndex debe ser un número entero entre 0 y 3 (varía las respuestas correctas).
+- difficulty debe ser "easy", "medium" o "hard".
+- Responde ÚNICAMENTE con el objeto JSON válido.`;
+
+        const cleanApiKey = apiKey.trim();
+        console.log(`[AIService] Requesting questions from Gemini for: "${topic}"...`);
+
+        // Fallback model list — tries newest first, falls back on 503
+        const fallbackModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-1.5-flash'];
+
+        for (const model of fallbackModels) {
+          try {
+            const response = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: promptText }] }],
+                  generationConfig: {
+                    responseMimeType: 'application/json',
+                    temperature: 0.7,
+                  },
+                }),
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (rawText) {
+                const parsed = JSON.parse(rawText);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  console.log(`[AIService] Questions generated successfully with model ${model}.`);
+                  return parsed.map((q: any, i: number) => ({
+                    id: `q_gemini_${topic}_${Date.now()}_${i}`,
+                    topic,
+                    prompt: `[Gemini IA]: ${q.prompt}`,
+                    options: Array.isArray(q.options) && q.options.length === 4 ? q.options : ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
+                    correctOptionIndex: typeof q.correctOptionIndex === 'number' && q.correctOptionIndex >= 0 && q.correctOptionIndex <= 3 ? q.correctOptionIndex : 0,
+                    explanation: `[Gemini IA]: ${q.explanation || 'Explicación generada por IA.'}`,
+                    difficulty: (['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium') as Difficulty,
+                  }));
+                }
+              }
+            } else {
+              const status = response.status;
+              if (status === 429) {
+                console.warn(`[AIService] Rate limit reached (HTTP 429). Stopping retries.`);
+                break; // Detener reintentos para no malgastar cuota si el límite de usuario fue alcanzado
+              }
+              console.warn(`[AIService] Model ${model} unavailable (HTTP ${status}). Trying next...`);
+            }
+          } catch (modelErr) {
+            console.warn(`[AIService] Error calling ${model}:`, modelErr);
+          }
+        }
+      } catch (error) {
+        console.warn('[AIService] Network or API error, using local fallback:', error);
+      }
+    } else {
+      console.warn('[AIService] No valid EXPO_PUBLIC_GEMINI_API_KEY found. Using local bank.');
+    }
+
+    return this.generateLocalFallbackQuestions(topic);
+  }
+
+  // Local fallback question generator when no API key or no network
+  private static generateLocalFallbackQuestions(topic: string): Question[] {
     const formattedTopic = topic.replace(/_/g, ' ');
     const sourceQuestions = questionBank[topic] || [];
 
-    // Si el tema existe en el banco, seleccionamos preguntas del tema y aleatorizamos las opciones
-    // para que el índice de la respuesta correcta varíe (A, B, C, D) y sea 100% preciso para la subsección.
     if (sourceQuestions.length > 0) {
       const selected = [...sourceQuestions].sort(() => 0.5 - Math.random()).slice(0, 5);
 
       return selected.map((q, i) => {
         const originalCorrectOption = q.options[q.correctOptionIndex];
-        // Aleatorizar el orden de las 4 opciones para variar la posición de la respuesta correcta
         const shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
         const newCorrectIndex = shuffledOptions.indexOf(originalCorrectOption);
 
@@ -84,8 +172,6 @@ export class AIService {
       });
     }
 
-    // Si es un tema personalizado sin banco directo, generamos preguntas con respuestas variadas (B, A, C)
-    const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
     return [
       {
         id: `q_ai_gen_1`,
@@ -97,7 +183,7 @@ export class AIService {
           'Desactivar el análisis de TypeScript',
           'Convertir todas las variables a objetos'
         ],
-        correctOptionIndex: 1, // Respuesta B
+        correctOptionIndex: 1,
         explanation: `[IA Refuerzo]: TypeScript verifica tipos estáticamente para prevenir errores en tiempo de compilación.`,
         difficulty: 'easy'
       },
@@ -111,7 +197,7 @@ export class AIService {
           'Eliminar las funciones de JavaScript',
           'Aumentar el tamaño del archivo compilado'
         ],
-        correctOptionIndex: 0, // Respuesta A
+        correctOptionIndex: 0,
         explanation: `[IA Refuerzo]: El chequeo de tipos estático evita errores comunes de tiempo de ejecución.`,
         difficulty: 'medium'
       },
@@ -125,19 +211,41 @@ export class AIService {
           'Las comprobaciones de tipo se ejecutan en tiempo de ejecución dentro del navegador',
           'Permite detectar incoherencias en los datos'
         ],
-        correctOptionIndex: 2, // Respuesta C
+        correctOptionIndex: 2,
         explanation: `[IA Refuerzo]: Los tipos en TypeScript son eliminados durante la transpilación y NO se ejecutan en tiempo de ejecución.`,
         difficulty: 'hard'
       }
     ];
   }
 
-  // Tutor Explicador de Errores (Imagen 2 - Módulo 1)
-  public static explainCompilerError(errorLog: string): string {
+  // Explains a compiler error via Gemini
+  public static async explainCompilerError(errorLog: string): Promise<string> {
+    const apiKey = this.getApiKey();
+    if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('tu_api_key')) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey.trim()}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `Explica este error de compilación de TypeScript para un estudiante en máximo 2 oraciones sencillas y da un consejo práctico:\n${errorLog}` }] }],
+            }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return `[Tutor Gemini IA]: ${text.trim()}`;
+        }
+      } catch (e) {
+        // Fallback
+      }
+    }
     return `[Tutor IA]: El compilador indica un problema en el tipado. Intenta revisar si el valor retornado coincide con la interfaz declarada.`;
   }
 
-  // Revisor de Calidad de Código (Imagen 2 - Módulo 3)
+  // Code quality reviewer
   public static reviewCodeQuality(code: string): { bonusXP: number; feedback: string } {
     const usesStrictTypes = !code.includes("any");
     return {
@@ -149,7 +257,7 @@ export class AIService {
   }
 }
 
-// --- MOTOR PRINCIPAL (ANTIGRAVITY ENGINE) ---
+// --- ENGINE ---
 
 export class AntigravityEngine {
   private user: UserProfile;
@@ -171,7 +279,7 @@ export class AntigravityEngine {
     };
   }
 
-  // Gestión y restablecimiento de vidas (1 hora)
+  // Lives restore check (1 hour interval)
   public checkAndRestoreLives(): void {
     const now = Date.now();
     const timeElapsed = now - this.user.lastLivesRestoreTimestamp;
@@ -182,7 +290,9 @@ export class AntigravityEngine {
     }
   }
 
-  // Carga e inicia una sesión con preguntas generadas por IA
+  private isFetchingLazy: boolean = false;
+
+  // Loads a session with AI-generated or local questions
   public async loadSession(moduleTitle: string, topic: string, isAiGenerated: boolean = false): Promise<void> {
     this.checkAndRestoreLives();
     const questions = await AIService.generateSessionQuestions(topic, isAiGenerated);
@@ -192,12 +302,37 @@ export class AntigravityEngine {
       title: moduleTitle,
       topic,
       isUnlocked: true,
+      isAiGenerated,
       questions
     };
     this.currentQuestionIndex = 0;
   }
 
-  // Procesamiento de respuestas por pregunta
+  // Triggers a background lazy-load of 5 more questions when approaching the end
+  public async triggerLazyLoadIfNeeded(): Promise<void> {
+    if (!this.currentSession || !this.currentSession.isAiGenerated || this.isFetchingLazy) return;
+
+    const totalQuestions = this.currentSession.questions.length;
+    // Dispara lazy loading cuando el usuario esté en la pregunta 4 (índice 3 de 5), 9 (índice 8 de 10), etc.
+    if (this.currentQuestionIndex >= totalQuestions - 2) {
+      this.isFetchingLazy = true;
+      console.log(`[AntigravityEngine] Lazy loading: fetching 5 more questions for "${this.currentSession.topic}"...`);
+
+      try {
+        const batch = await AIService.generateAiQuestionsForTopic(this.currentSession.topic, 5);
+        if (this.currentSession && batch.length > 0) {
+          this.currentSession.questions.push(...batch);
+          console.log(`[AntigravityEngine] Lazy load complete. Total questions in session: ${this.currentSession.questions.length}`);
+        }
+      } catch (err) {
+        console.warn('[AntigravityEngine] Lazy load error:', err);
+      } finally {
+        this.isFetchingLazy = false;
+      }
+    }
+  }
+
+  // Processes the selected answer for the current question
   public submitAnswer(selectedIndex: number): { isCorrect: boolean; explanation: string; livesLeft: number } {
     this.checkAndRestoreLives();
 
@@ -207,6 +342,9 @@ export class AntigravityEngine {
     const currentQ = this.currentSession.questions[this.currentQuestionIndex];
     const isCorrect = selectedIndex === currentQ.correctOptionIndex;
 
+    // Disparar carga diferida (lazy load) en background
+    this.triggerLazyLoadIfNeeded().catch(() => {});
+
     if (isCorrect) {
       this.user.xp += 20;
       return { isCorrect: true, explanation: "¡Correcto!", livesLeft: this.user.lives };
@@ -214,7 +352,7 @@ export class AntigravityEngine {
       // Restar 1 vida por respuesta incorrecta
       this.user.lives = Math.max(0, this.user.lives - 1);
 
-      // Registrar analítica de errores por tema (Imagen 1)
+      // Track error analytics per topic
       const topic = currentQ.topic;
       this.user.analytics.topicErrorCount[topic] = (this.user.analytics.topicErrorCount[topic] || 0) + 1;
 
@@ -226,7 +364,7 @@ export class AntigravityEngine {
     }
   }
 
-  // Avanza de pregunta o activa animación de finalización
+  // Advances to the next question or marks session as complete
   public nextQuestion(): { isModuleFinished: boolean } {
     if (!this.currentSession) return { isModuleFinished: true };
 
@@ -234,18 +372,18 @@ export class AntigravityEngine {
       this.currentQuestionIndex++;
       return { isModuleFinished: false };
     } else {
-      // Módulo Completado -> Activar animación y otorgar logros
+      // Module complete
       this.triggerCompletionAnimation();
       this.user.streak += 1;
       return { isModuleFinished: true };
     }
   }
 
-  // Animación de serpentinas / Confetti al finalizar el curso/módulo
+  // Placeholder for confetti/completion animation
   private triggerCompletionAnimation(): void {
     // Si usas la librería 'canvas-confetti' en el Frontend:
     // window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-    console.log("🎉 ¡MÓDULO COMPLETADO! Lanzando animación de serpentinas y confetti...");
+    console.log('Module complete. Confetti animation would fire here.');
   }
 
   public getUserProfile(): UserProfile {

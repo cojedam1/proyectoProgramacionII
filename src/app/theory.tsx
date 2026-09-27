@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theoryBank, TheoryModule } from '@/data/theoryBank';
 import { engine } from '@/engine/AntigravityEngine';
 
-// Agrupador de temas por sección para la navegación entre subsecciones
+// Maps topics to sections for subsection navigation
 const SECTIONS_TOPICS = [
   {
     sectionTitle: '1. Fundamentos de TypeScript',
@@ -46,13 +46,13 @@ export default function TheoryScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ topic?: string }>();
   
-  // Tema seleccionado (por defecto tipos_primitivos)
+  // Initial topic, defaults to tipos_primitivos
   const initialTopic = params.topic && theoryBank[params.topic] ? params.topic : 'tipos_primitivos';
   const [currentTopicKey, setCurrentTopicKey] = useState<string>(initialTopic);
 
   const currentTheory: TheoryModule = theoryBank[currentTopicKey] || theoryBank['tipos_primitivos'];
 
-  // Animación al cambiar de tema
+  // Animate on topic change
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -65,7 +65,7 @@ export default function TheoryScreen() {
     ]).start();
   }, [currentTopicKey]);
 
-  // Encuentra los temas hermanos dentro de la misma sección
+  // Find sibling topics in the same section
   const currentSection = SECTIONS_TOPICS.find((s) => s.topics.includes(currentTopicKey)) || SECTIONS_TOPICS[0];
 
   const handleStartPractice = async () => {
@@ -75,12 +75,12 @@ export default function TheoryScreen() {
 
   return (
     <View style={styles.bg}>
-      {/* Esferas decorativas de fondo */}
+      {/* Background orbs */}
       <View style={[styles.orb, styles.orb1]} />
       <View style={[styles.orb, styles.orb2]} />
 
       <SafeAreaView style={styles.safe}>
-        {/* Barra superior de navegación */}
+        {/* Top navigation bar */}
         <View style={styles.topBar}>
           <Pressable onPress={() => router.back()} style={styles.backBtn}>
             <Text style={styles.backText}>← Volver</Text>
@@ -89,7 +89,7 @@ export default function TheoryScreen() {
           <View style={{ width: 60 }} />
         </View>
 
-        {/* Pestañas de subsecciones dentro de la sección actual */}
+        {/* Subsection tabs */}
         <View style={styles.subsectionsBar}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsContainer}>
             {currentSection.topics.map((tKey) => {
@@ -112,7 +112,7 @@ export default function TheoryScreen() {
 
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-            {/* Header del tema */}
+            {/* Topic header */}
             <View style={styles.titleCard}>
               <Text style={styles.sectionBadge}>{currentTheory.sectionTitle}</Text>
               <Text style={styles.topicTitle}>{currentTheory.title}</Text>
@@ -120,7 +120,7 @@ export default function TheoryScreen() {
             </View>
 
 
-            {/* Bloque de Código Explicativo */}
+            {/* Code block */}
             <View style={styles.codeCard}>
               <View style={styles.codeHeader}>
                 <View style={styles.codeDots}>
@@ -135,11 +135,11 @@ export default function TheoryScreen() {
               </ScrollView>
             </View>
 
-            {/* Tips y Errores comunes */}
+            {/* Tips */}
             <View style={styles.tipsCard}>
               <View style={styles.cardHeaderRow}>
                 <Text style={styles.cardIcon}>🧠</Text>
-                <Text style={styles.cardTitle}>Tips & Buenas Prácticas</Text>
+                <Text style={styles.cardTitle}>Tips y buenas prácticas</Text>
               </View>
               {currentTheory.tips.map((tip, idx) => (
                 <Text key={idx} style={styles.tipText}>
@@ -148,9 +148,9 @@ export default function TheoryScreen() {
               ))}
             </View>
 
-            {/* Botón de acción principal: Ir a Ejercicios */}
+            {/* Practice button */}
             <Pressable onPress={handleStartPractice} style={styles.actionBtn}>
-              <Text style={styles.actionBtnText}>🚀 Comenzar Ejercicios Prácticos</Text>
+              <Text style={styles.actionBtnText}>Iniciar ejercicios</Text>
             </Pressable>
 
             <View style={{ height: 40 }} />

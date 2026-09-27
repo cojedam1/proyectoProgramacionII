@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { theoryBank } from '@/data/theoryBank';
 import { Question, UserProfile, engine } from '@/engine/AntigravityEngine';
 
 type AnswerState = 'unanswered' | 'correct' | 'incorrect';
@@ -35,6 +37,7 @@ export default function QuizScreen() {
   );
   const [qIndex, setQIndex] = useState(questionIndex);
   const [totalQ, setTotalQ] = useState(session ? session.questions.length : 0);
+  const [showTheoryModal, setShowTheoryModal] = useState(false);
 
   // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -45,7 +48,7 @@ export default function QuizScreen() {
   useEffect(() => {
     animateIn();
     updateProgress(qIndex, totalQ);
-  }, [qIndex]);
+  }, [qIndex, totalQ]);
 
   function animateIn() {
     fadeAnim.setValue(0);
@@ -105,6 +108,7 @@ export default function QuizScreen() {
 
     setCurrentQ(newQ);
     setQIndex(newIndex);
+    setTotalQ(newSession.questions.length);
     setSelectedIndex(null);
     setAnswerState('unanswered');
     setExplanation('');
@@ -129,16 +133,53 @@ export default function QuizScreen() {
     hard: '#EF4444',
   };
   const diffColor = diffColors[currentQ.difficulty] ?? '#7C3AED';
-  const livesArray = Array.from({ length: 15 }, (_, i) => i < livesLeft);
+  const theoryData = theoryBank[currentQ.topic] || theoryBank['tipos_primitivos'];
 
   return (
     <View style={styles.bg}>
       <View style={[styles.orb, styles.orb1]} />
       <View style={[styles.orb, styles.orb2]} />
 
+      {/* Theory modal */}
+      <Modal visible={showTheoryModal} animationType="slide" transparent={false}>
+        <View style={styles.theoryModalBg}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.theoryModalHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.theoryModalSectionTitle}>{theoryData?.sectionTitle}</Text>
+                <Text style={styles.theoryModalTitle}>{theoryData?.title}</Text>
+              </View>
+              <Pressable onPress={() => setShowTheoryModal(false)} style={styles.closeTheoryBtn}>
+                <Text style={styles.closeTheoryText}>✕ Cerrar</Text>
+              </Pressable>
+            </View>
+
+            <ScrollView contentContainerStyle={styles.theoryModalScroll} showsVerticalScrollIndicator={false}>
+              <Text style={styles.theoryModalSummary}>{theoryData?.summary}</Text>
+
+              <Text style={styles.theoryModalSubtitle}>💻 Ejemplo de Código</Text>
+              <View style={styles.codeContainer}>
+                <Text style={styles.codeText}>{theoryData?.codeExample}</Text>
+              </View>
+
+              <Text style={styles.theoryModalSubtitle}>💡 Tips Importantes</Text>
+              {theoryData?.tips.map((tip, idx) => (
+                <View key={idx} style={styles.theoryTipBox}>
+                  <Text style={styles.theoryTipText}>{tip}</Text>
+                </View>
+              ))}
+
+              <Pressable onPress={() => setShowTheoryModal(false)} style={styles.resumeQuizBtn}>
+                <Text style={styles.resumeQuizBtnText}>▶ Volver a la Pregunta</Text>
+              </Pressable>
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+      </Modal>
+
       <SafeAreaView style={styles.safe}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          {/* Top Bar */}
+          {/* Top bar */}
           <View style={styles.topBar}>
             <Pressable
               onPress={() => router.replace('/')}
@@ -147,13 +188,23 @@ export default function QuizScreen() {
             >
               <Text style={styles.backText}>← Inicio</Text>
             </Pressable>
+
+            {/* Botón Revisar Teoría */}
+            <Pressable
+              onPress={() => setShowTheoryModal(true)}
+              style={styles.theoryHeaderBtn}
+              accessibilityLabel="Revisar Teoría de la subsección"
+            >
+              <Text style={styles.theoryHeaderBtnText}>Revisar Teoría</Text>
+            </Pressable>
+
             <View style={styles.livesRow}>
               <Text style={styles.miniHeart}>❤️</Text>
               <Text style={styles.livesCount}>{livesLeft}</Text>
             </View>
           </View>
 
-          {/* Progress Bar */}
+          {/* Progress bar */}
           <View style={styles.progressBg}>
             <Animated.View
               style={[
@@ -171,17 +222,17 @@ export default function QuizScreen() {
             Pregunta {qIndex + 1} de {totalQ}
           </Text>
 
-          {/* Module Title */}
+          {/* Module title */}
           <Text style={styles.moduleTitle}>{session.title}</Text>
 
-          {/* Difficulty Badge */}
+          {/* Difficulty badge */}
           <View style={[styles.diffBadge, { backgroundColor: diffColor + '22', borderColor: diffColor }]}>
             <Text style={[styles.diffText, { color: diffColor }]}>
               {currentQ.difficulty.toUpperCase()}
             </Text>
           </View>
 
-          {/* Question Card */}
+          {/* Question card */}
           <Animated.View
             style={[
               styles.questionCard,
@@ -224,7 +275,7 @@ export default function QuizScreen() {
             </Animated.View>
           )}
 
-          {/* Next Button */}
+          {/* Next button */}
           {answerState !== 'unanswered' && (
             <Pressable
               style={styles.nextBtn}
@@ -232,7 +283,7 @@ export default function QuizScreen() {
               accessibilityLabel="Siguiente pregunta"
             >
               <Text style={styles.nextBtnText}>
-                {qIndex + 1 >= totalQ ? '🏁 Ver Resultados' : 'Siguiente →'}
+                {qIndex + 1 >= totalQ ? 'Ver Resultados' : 'Siguiente →'}
               </Text>
             </Pressable>
           )}
@@ -440,4 +491,111 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   btnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  theoryHeaderBtn: {
+    backgroundColor: '#26194C',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#3D2975',
+  },
+  theoryHeaderBtnText: {
+    color: '#C4B5FD',
+    fontWeight: '800',
+    fontSize: 13,
+  },
+  theoryModalBg: {
+    flex: 1,
+    backgroundColor: DARK_BG,
+  },
+  theoryModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: CARD_BORDER,
+    backgroundColor: CARD_BG,
+  },
+  theoryModalSectionTitle: {
+    color: '#A78BFA',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  theoryModalTitle: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '800',
+    marginTop: 2,
+  },
+  closeTheoryBtn: {
+    backgroundColor: '#371F68',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#5B3AA8',
+  },
+  closeTheoryText: {
+    color: '#FFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  theoryModalScroll: {
+    padding: 20,
+    gap: 16,
+  },
+  theoryModalSummary: {
+    color: '#E9E3FF',
+    fontSize: 15,
+    lineHeight: 24,
+    fontWeight: '400',
+  },
+  theoryModalSubtitle: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '800',
+    marginTop: 8,
+  },
+  codeContainer: {
+    backgroundColor: '#0A0614',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#2D1B69',
+    padding: 16,
+  },
+  codeText: {
+    color: '#A78BFA',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  theoryTipBox: {
+    backgroundColor: '#1E143B',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    padding: 14,
+  },
+  theoryTipText: {
+    color: '#D1D5DB',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  resumeQuizBtn: {
+    backgroundColor: PURPLE,
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 20,
+  },
+  resumeQuizBtnText: {
+    color: '#FFF',
+    fontWeight: '800',
+    fontSize: 15,
+  },
 });

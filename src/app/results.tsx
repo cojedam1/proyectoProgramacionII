@@ -12,10 +12,17 @@ export default function ResultsScreen() {
   // Animations
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const starAnims = Array.from({ length: 6 }, () => useRef(new Animated.Value(0)).current);
+  // Star animation refs — declared individually to follow React Rules of Hooks
+  const star0 = useRef(new Animated.Value(0)).current;
+  const star1 = useRef(new Animated.Value(0)).current;
+  const star2 = useRef(new Animated.Value(0)).current;
+  const star3 = useRef(new Animated.Value(0)).current;
+  const star4 = useRef(new Animated.Value(0)).current;
+  const star5 = useRef(new Animated.Value(0)).current;
+  const starAnims = [star0, star1, star2, star3, star4, star5];
 
   useEffect(() => {
-    // Trophy entrance
+    // Trophy scale-in
     Animated.spring(scaleAnim, {
       toValue: 1,
       friction: 4,
@@ -23,7 +30,7 @@ export default function ResultsScreen() {
       useNativeDriver: true,
     }).start();
 
-    // Fade in content
+    // Content fade-in
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
@@ -31,7 +38,7 @@ export default function ResultsScreen() {
       useNativeDriver: true,
     }).start();
 
-    // Stars pop in sequence
+    // Stars stagger in
     starAnims.forEach((anim, i) => {
       Animated.spring(anim, {
         toValue: 1,
@@ -52,7 +59,7 @@ export default function ResultsScreen() {
       <View style={[styles.orb, styles.orb3]} />
 
       <SafeAreaView style={styles.safe}>
-        {/* Floating stars decoration */}
+        {/* Stars row */}
         <View style={styles.starsRow}>
           {starAnims.map((anim, i) => (
             <Animated.Text
@@ -67,7 +74,7 @@ export default function ResultsScreen() {
           ))}
         </View>
 
-        {/* Trophy */}
+        {/* Trophy icon */}
         <Animated.View
           style={[styles.trophyWrapper, { transform: [{ scale: scaleAnim }] }]}
         >
@@ -77,22 +84,22 @@ export default function ResultsScreen() {
         </Animated.View>
 
         <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-          <Text style={styles.title}>¡Módulo Completado!</Text>
+          <Text style={styles.title}>Módulo Completado</Text>
           <Text style={styles.subtitle}>
-            ¡Excelente trabajo, {profile.name}! Sigue así. 🚀
+            Buen trabajo, {profile.name}. Continúa avanzando.
           </Text>
 
-          {/* Stats Cards */}
+          {/* Stats */}
           <View style={styles.statsGrid}>
             <StatCard emoji="⚡" label="XP Total" value={`${profile.xp}`} color="#A78BFA" />
             <StatCard emoji="🔥" label="Racha" value={`${profile.streak}`} color="#F59E0B" />
             <StatCard emoji="❤️" label="Vidas" value={`${profile.lives}`} color="#EF4444" />
           </View>
 
-          {/* Error Analytics */}
+          {/* Error analytics */}
           {topics.length > 0 && (
             <View style={styles.analyticsCard}>
-              <Text style={styles.analyticsTitle}>📊 Temas a Reforzar</Text>
+              <Text style={styles.analyticsTitle}>Temas a reforzar</Text>
               {topics.map(([topic, count]) => (
                 <View key={topic} style={styles.analyticsRow}>
                   <Text style={styles.analyticsTopic}>{topic}</Text>
@@ -104,13 +111,13 @@ export default function ResultsScreen() {
             </View>
           )}
 
-          {/* Buttons */}
+          {/* Actions */}
           <Pressable
             style={styles.primaryBtn}
             onPress={() => router.replace('/')}
             accessibilityLabel="Volver al inicio"
           >
-            <Text style={styles.primaryBtnText}>🏠 Volver al Inicio</Text>
+            <Text style={styles.primaryBtnText}>Volver al Inicio</Text>
           </Pressable>
         </Animated.View>
       </SafeAreaView>

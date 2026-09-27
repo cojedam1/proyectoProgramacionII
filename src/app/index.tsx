@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -12,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getRandomTipForTopic } from '@/data/tipsBank';
 import { AntigravityEngine, UserProfile, engine } from '@/engine/AntigravityEngine';
 
 const SECTIONS = [
@@ -87,8 +89,12 @@ export default function HomeScreen() {
   const [profile, setProfile] = useState<UserProfile>(engine.getUserProfile());
   const [userName, setUserName] = useState(profile.name);
   const [editingName, setEditingName] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiTip, setAiTip] = useState('');
+  const [loadingTopicTitle, setLoadingTopicTitle] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -100,14 +106,76 @@ export default function HomeScreen() {
   const refreshProfile = () => setProfile(engine.getUserProfile());
 
   const handleStartModule = async (mod: { title: string; topic: string }, isAiGenerated: boolean = false) => {
-    await engine.loadSession(mod.title, mod.topic, isAiGenerated);
-    refreshProfile();
-    router.push('/quiz');
+    if (isAiGenerated) {
+      const tip = getRandomTipForTopic(mod.topic);
+      setAiTip(tip);
+      setLoadingTopicTitle(mod.title);
+      setAiLoading(true);
+
+      progressAnim.setValue(0);
+      Animated.timing(progressAnim, {
+        toValue: 1,
+        duration: 6000,
+        useNativeDriver: false,
+      }).start();
+
+      const loadTask = engine.loadSession(mod.title, mod.topic, true);
+      const timerTask = new Promise((resolve) => setTimeout(resolve, 6000));
+
+      await Promise.all([loadTask, timerTask]);
+      setAiLoading(false);
+      refreshProfile();
+      router.push('/quiz');
+    } else {
+      await engine.loadSession(mod.title, mod.topic, false);
+      refreshProfile();
+      router.push('/quiz');
+    }
   };
 
   return (
     <View style={styles.bg}>
-      {/* Gradient orbs decorativos */}
+      {/* Loading modal */}
+      <Modal visible={aiLoading} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <PulseAnimation>
+              <View style={styles.aiBadgeIcon}>
+                <Text style={{ fontSize: 32 }}>🤖</Text>
+              </View>
+            </PulseAnimation>
+            <Text style={styles.modalTitle}>Generando ejercicios con IA</Text>
+            <Text style={styles.modalTopicSub}>{loadingTopicTitle}</Text>
+
+            {/* Tip de la subsección */}
+            <View style={styles.tipCard}>
+              <Text style={styles.tipCardHeader}>TIP DE LA SUBSECCIÓN</Text>
+              <Text style={styles.tipCardText}>{aiTip}</Text>
+            </View>
+
+            {/* Progress bar */}
+            <View style={styles.modalProgressBg}>
+              <Animated.View
+                style={[
+                  styles.modalProgressFill,
+                  {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
+                ]}
+              />
+            </View>
+
+            <Text style={styles.modalFooterHint}>
+              Gemini está preparando tu quiz mientras lees este concepto.
+            </Text>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Background orbs */}
       <View style={[styles.orb, styles.orb1]} />
       <View style={[styles.orb, styles.orb2]} />
 
@@ -138,13 +206,13 @@ export default function HomeScreen() {
                 />
               ) : (
                 <Pressable onPress={() => setEditingName(true)}>
-                  <Text style={styles.greeting}>¡Hola, {profile.name}! 👋</Text>
+                  <Text style={styles.greeting}>Hola, {profile.name}</Text>
                 </Pressable>
               )}
               <Text style={styles.subtitle}>Continúa aprendiendo TypeScript</Text>
             </View>
 
-            {/* Stats Row */}
+            {/* Stats */}
             <View style={styles.statsRow}>
               <View style={styles.statCard}>
                 <Text style={styles.statEmoji}>⚡</Text>
@@ -170,7 +238,7 @@ export default function HomeScreen() {
                 <View style={styles.livesInfo}>
                   <Text style={styles.livesTitle}>Vidas disponibles: {profile.lives} / {profile.maxLives}</Text>
                   {profile.lives < profile.maxLives ? (
-                    <Text style={styles.livesRestoreHint}>⏱ Las vidas se restauran en 1 hora</Text>
+                    <Text style={styles.livesRestoreHint}>Las vidas se restauran en 1 hora</Text>
                   ) : (
                     <Text style={styles.livesRestoreHint}>Vidas al máximo</Text>
                   )}
@@ -178,7 +246,7 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* Modules by Sections */}
+            {/* Module sections */}
             {SECTIONS.map((section, secIndex) => (
               <View key={secIndex} style={styles.sectionContainer}>
                 <View style={styles.sectionHeaderRow}>
@@ -187,7 +255,7 @@ export default function HomeScreen() {
                     onPress={() => router.push({ pathname: '/theory', params: { topic: section.modules[0].topic } })}
                     style={styles.sectionTheoryHeaderBtn}
                   >
-                    <Text style={styles.sectionTheoryHeaderBtnText}>📖 Teoría de la Sección</Text>
+                    <Text style={styles.sectionTheoryHeaderBtnText}>Teoría de la Sección</Text>
                   </Pressable>
                 </View>
 
@@ -226,16 +294,16 @@ export default function HomeScreen() {
                 })
               ) : (
                 <View style={styles.aiEmptyCard}>
-                  <Text style={styles.aiEmptyTitle}>🤖 Sin áreas de oportunidad registradas</Text>
+                  <Text style={styles.aiEmptyTitle}>Sin áreas de oportunidad registradas</Text>
                   <Text style={styles.aiEmptyText}>
-                    A medida que resuelvas módulos y cometas algunos errores, la IA detectará tus temas débiles y creará ejercicios de refuerzo personalizados aquí.
+                    A medida que completes módulos y cometas errores, la IA detectará tus temas débiles y generará ejercicios de refuerzo aquí.
                   </Text>
                   <Pressable
                     style={styles.aiPracticeBtn}
                     onPress={() => handleStartModule({ title: 'Práctica Libre de Refuerzo IA', topic: 'tipos_primitivos' }, true)}
                     disabled={profile.lives <= 0}
                   >
-                    <Text style={styles.aiPracticeBtnText}>⚡ Generar Práctica de Prueba con IA</Text>
+                    <Text style={styles.aiPracticeBtnText}>Generar práctica de prueba</Text>
                   </Pressable>
                 </View>
               )}
@@ -289,7 +357,7 @@ function ModuleCard({
             style={styles.theoryBadgeBtn}
             accessibilityLabel={`Leer teoría de ${title}`}
           >
-            <Text style={styles.theoryBadgeText}>📖 Teoría</Text>
+            <Text style={styles.theoryBadgeText}>Teoría</Text>
           </Pressable>
 
           <Pressable
@@ -597,5 +665,94 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '800',
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 10, 30, 0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    width: '100%',
+    backgroundColor: '#1E143B',
+    borderRadius: 24,
+    borderWidth: 1.5,
+    borderColor: '#3D2975',
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: PURPLE,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 12,
+  },
+  aiBadgeIcon: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: PURPLE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    shadowColor: PURPLE,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 14,
+  },
+  modalTitle: {
+    color: '#FFF',
+    fontSize: 19,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  modalTopicSub: {
+    color: PURPLE_LIGHT,
+    fontSize: 13,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  tipCard: {
+    width: '100%',
+    backgroundColor: '#120A28',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#38256B',
+    padding: 16,
+    marginBottom: 20,
+  },
+  tipCardHeader: {
+    color: '#A78BFA',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    marginBottom: 8,
+  },
+  tipCardText: {
+    color: '#E9E3FF',
+    fontSize: 14,
+    lineHeight: 22,
+    fontWeight: '500',
+  },
+  modalProgressBg: {
+    width: '100%',
+    height: 8,
+    backgroundColor: '#2A1A52',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 14,
+  },
+  modalProgressFill: {
+    height: 8,
+    backgroundColor: PURPLE_LIGHT,
+    borderRadius: 4,
+  },
+  modalFooterHint: {
+    color: '#9CA3AF',
+    fontSize: 12,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
