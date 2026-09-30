@@ -24,8 +24,8 @@ export interface UserProfile {
   maxLives: number;
   lastLivesRestoreTimestamp: number; // Para la recarga en 1 hora
   streak: number;
+  lastActiveDate?: string; // Fecha en formato YYYY-MM-DD para calcular la racha diaria
   xp: number;
-  badges: string[];
   analytics: UserAnalytics;
 }
 
@@ -193,6 +193,7 @@ Condiciones:
         prompt: `[IA Ejercicio]: ¿Qué beneficio clave aporta utilizar ${formattedTopic} correctamente?`,
         options: [
           'Prevenir errores de asignación e incompatibilidad antes de ejecutar el código',
+          'Prevenir errores de asignación e incompatibilidad antes de ejecutar el código',
           'Hacer que el código corra más rápido en el navegador',
           'Eliminar las funciones de JavaScript',
           'Aumentar el tamaño del archivo compilado'
@@ -274,13 +275,54 @@ export class AntigravityEngine {
       lastLivesRestoreTimestamp: Date.now(),
       streak: 0,
       xp: 0,
-      badges: [],
       analytics: { topicErrorCount: {} }
     };
   }
 
+  // Verifica si ha pasado más de un día sin actividad para reiniciar la racha a 0
+  public checkStreakReset(): void {
+    if (!this.user.lastActiveDate) return;
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = new Date(this.user.lastActiveDate);
+    const currentDate = new Date(today);
+    const diffInTime = currentDate.getTime() - lastDate.getTime();
+    const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
+
+    if (diffInDays > 1) {
+      this.user.streak = 0;
+    }
+  }
+
+  // Actualiza la racha diaria al completar actividad
+  public updateDailyStreak(): void {
+    const today = new Date().toISOString().split('T')[0];
+    if (!this.user.lastActiveDate) {
+      this.user.lastActiveDate = today;
+      this.user.streak = 1;
+      return;
+    }
+
+    if (this.user.lastActiveDate === today) {
+      // Ya cuenta con actividad hoy, la racha se mantiene igual
+      return;
+    }
+
+    const lastDate = new Date(this.user.lastActiveDate);
+    const currentDate = new Date(today);
+    const diffInTime = currentDate.getTime() - lastDate.getTime();
+    const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
+
+    if (diffInDays === 1) {
+      this.user.streak += 1;
+    } else {
+      this.user.streak = 1;
+    }
+    this.user.lastActiveDate = today;
+  }
+
   // Lives restore check (1 hour interval)
   public checkAndRestoreLives(): void {
+    this.checkStreakReset();
     const now = Date.now();
     const timeElapsed = now - this.user.lastLivesRestoreTimestamp;
 
@@ -343,7 +385,7 @@ export class AntigravityEngine {
     const isCorrect = selectedIndex === currentQ.correctOptionIndex;
 
     // Disparar carga diferida (lazy load) en background
-    this.triggerLazyLoadIfNeeded().catch(() => {});
+    this.triggerLazyLoadIfNeeded().catch(() => { });
 
     if (isCorrect) {
       this.user.xp += 20;
@@ -374,7 +416,7 @@ export class AntigravityEngine {
     } else {
       // Module complete
       this.triggerCompletionAnimation();
-      this.user.streak += 1;
+      this.updateDailyStreak();
       return { isModuleFinished: true };
     }
   }

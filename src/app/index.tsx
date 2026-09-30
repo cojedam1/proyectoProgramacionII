@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getRandomTipForTopic } from '@/data/tipsBank';
 import { AntigravityEngine, UserProfile, engine } from '@/engine/AntigravityEngine';
+import { supabase } from '@/lib/supabase';
 
 const SECTIONS = [
   {
@@ -92,9 +93,36 @@ export default function HomeScreen() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiTip, setAiTip] = useState('');
   const [loadingTopicTitle, setLoadingTopicTitle] = useState('');
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState<
+    { name: string; xp: number; streak: number; isCurrentUser?: boolean }[]
+  >([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
+
+  const handleOpenLeaderboard = async () => {
+    setShowLeaderboard(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('name, xp, streak')
+        .order('xp', { ascending: false })
+        .limit(5);
+
+      if (!error && data && data.length > 0) {
+        setLeaderboardData(data);
+        return;
+      }
+    } catch (e) {
+      // Fallback si la tabla aún no existe en Supabase
+    }
+
+    // Si no hay datos de Supabase aún, muestra la información real del usuario actual
+    setLeaderboardData([
+      { name: profile.name, xp: profile.xp, streak: profile.streak, isCurrentUser: true }
+    ]);
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -222,14 +250,17 @@ export default function HomeScreen() {
               <View style={styles.statCard}>
                 <Text style={styles.statEmoji}>🔥</Text>
                 <Text style={styles.statValue}>{profile.streak}</Text>
-                <Text style={styles.statLabel}>Racha</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statEmoji}>🏆</Text>
-                <Text style={styles.statValue}>{profile.badges.length}</Text>
-                <Text style={styles.statLabel}>Logros</Text>
+                <Text style={styles.statLabel}>Racha Diaria</Text>
               </View>
             </View>
+
+            {/* Leaderboard Button */}
+            <Pressable
+              style={styles.leaderboardBtn}
+              onPress={handleOpenLeaderboard}
+            >
+              <Text style={styles.leaderboardBtnText}>🏆 Tabla de Líderes (Top 5)</Text>
+            </Pressable>
 
             {/* Lives */}
             <View style={styles.livesCard}>
@@ -309,10 +340,71 @@ export default function HomeScreen() {
               )}
             </View>
 
+            <View style={styles.logoutWrapper}>
+              <Pressable
+                onPress={() => supabase.auth.signOut()}
+                style={styles.logoutBtn}
+              >
+                <Text style={styles.logoutBtnText}>Cerrar Sesión</Text>
+              </Pressable>
+            </View>
+
             <View style={{ height: 40 }} />
           </Animated.View>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Floating Leaderboard Modal */}
+      <Modal
+        visible={showLeaderboard}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowLeaderboard(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.leaderboardCard}>
+            <View style={styles.lbHeaderRow}>
+              <Text style={styles.lbTitle}>🏆 Tabla de Líderes</Text>
+              <Pressable onPress={() => setShowLeaderboard(false)} style={styles.lbCloseIconBtn}>
+                <Text style={{ color: '#888', fontWeight: 'bold', fontSize: 16 }}>✕</Text>
+              </Pressable>
+            </View>
+
+            <Text style={styles.lbSubtitle}>Top 5 estudiantes con más XP acumulada</Text>
+
+            <View style={styles.lbList}>
+              {leaderboardData.map((item, idx) => {
+                const rankEmojis = ['🥇', '🥈', '🥉', '4.', '5.'];
+                const isUser = item.isCurrentUser || item.name === profile.name;
+                return (
+                  <View 
+                    key={idx} 
+                    style={[
+                      styles.lbRow, 
+                      isUser ? styles.lbRowCurrent : null
+                    ]}
+                  >
+                    <Text style={styles.lbRank}>{rankEmojis[idx] || `${idx + 1}.`}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.lbName}>
+                        {item.name} {isUser && <Text style={styles.lbYouBadge}>(Tú)</Text>}
+                      </Text>
+                    </View>
+                    <View style={styles.lbStats}>
+                      <Text style={styles.lbXp}>⚡ {item.xp} XP</Text>
+                      <Text style={styles.lbStreak}>🔥 {item.streak}</Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+
+            <Pressable style={styles.lbCloseBtn} onPress={() => setShowLeaderboard(false)}>
+              <Text style={styles.lbCloseBtnText}>Cerrar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -412,6 +504,142 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 20,
     paddingTop: Platform.OS === 'android' ? 20 : 0,
+  },
+  leaderboardBtn: {
+    backgroundColor: '#1E133A',
+    borderWidth: 1,
+    borderColor: '#3D2A60',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 12,
+    shadowColor: '#7C3AED',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  leaderboardBtnText: {
+    color: '#FFD700',
+    fontSize: 14,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(5, 2, 12, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  leaderboardCard: {
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor: '#1A1035',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#3D2A60',
+    padding: 22,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  lbHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  lbTitle: {
+    color: '#FFD700',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  lbCloseIconBtn: {
+    padding: 6,
+  },
+  lbSubtitle: {
+    color: '#A099BD',
+    fontSize: 13,
+    marginBottom: 20,
+  },
+  lbList: {
+    gap: 10,
+    marginBottom: 20,
+  },
+  lbRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#120B24',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#2A1F4C',
+  },
+  lbRowCurrent: {
+    borderColor: '#FFD700',
+    backgroundColor: '#261B48',
+  },
+  lbRank: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    width: 32,
+    textAlign: 'center',
+  },
+  lbName: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  lbYouBadge: {
+    color: '#FFD700',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  lbStats: {
+    alignItems: 'flex-end',
+  },
+  lbXp: {
+    color: '#A78BFA',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  lbStreak: {
+    color: '#F59E0B',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  lbCloseBtn: {
+    backgroundColor: '#6C47FF',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  lbCloseBtnText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  logoutWrapper: {
+    marginTop: 30,
+    alignItems: 'flex-end',
+  },
+  logoutBtn: {
+    backgroundColor: '#1E1435',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#3D2A60',
+  },
+  logoutBtnText: {
+    color: '#FF5555',
+    fontSize: 14,
+    fontWeight: '600',
   },
   header: {
     alignItems: 'center',
