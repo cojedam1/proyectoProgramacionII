@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { engine } from '@/engine/AntigravityEngine';
+import { supabase } from '@/lib/supabase';
 
 export default function ResultsScreen() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function ResultsScreen() {
       toValue: 1,
       friction: 4,
       tension: 80,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
 
     // Content fade-in
@@ -35,7 +36,7 @@ export default function ResultsScreen() {
       toValue: 1,
       duration: 600,
       delay: 300,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
 
     // Stars stagger in
@@ -45,9 +46,28 @@ export default function ResultsScreen() {
         friction: 4,
         tension: 100,
         delay: 400 + i * 100,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }).start();
     });
+    // Sync profile stats to Supabase leaderboard
+    async function syncStats() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const displayName = user.user_metadata?.name || user.email?.split('@')[0] || profile.name;
+          await supabase.from('profiles').upsert({
+            id: user.id,
+            name: displayName,
+            xp: profile.xp,
+            streak: profile.streak,
+            updated_at: new Date().toISOString(),
+          });
+        }
+      } catch (e) {
+        console.warn('Leaderboard sync error:', e);
+      }
+    }
+    syncStats();
   }, []);
 
   const topics = Object.entries(profile.analytics.topicErrorCount);

@@ -5,7 +5,10 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
 export interface Question {
   id: string;
   topic: string;
-  prompt: string;
+  conceptIntro?: string; // Micro-concepto explicativo previo
+  prompt: string;        // Pregunta práctica ("¿Qué imprime?", "Completa el código")
+  codeSnippet?: string;  // Bloque de código TypeScript en editor IDE
+  isCodeOptions?: boolean; // Si es true, renderiza botones con estilo de código
   options: string[];
   correctOptionIndex: number;
   explanation: string;
@@ -14,7 +17,8 @@ export interface Question {
 }
 
 export interface UserAnalytics {
-  topicErrorCount: Record<string, number>; // Registra temas con más fallos
+  topicErrorCount: Record<string, number>;   // Registra temas con más fallos
+  topicSuccessCount: Record<string, number>; // Registra aciertos por tema
 }
 
 export interface UserProfile {
@@ -40,6 +44,62 @@ export interface SessionModule {
 
 import { questionBank } from '@/data/questionBank';
 
+// --- UTILS DE ALEATORIEDAD ---
+
+export function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+export function shuffleQuestion(q: Question): Question {
+  const originalCorrectOption = q.options[q.correctOptionIndex];
+  const shuffledOptions = shuffleArray(q.options);
+  const newCorrectIndex = shuffledOptions.indexOf(originalCorrectOption);
+
+  return {
+    ...q,
+    options: shuffledOptions,
+    correctOptionIndex: newCorrectIndex >= 0 ? newCorrectIndex : 0,
+  };
+}
+
+export function enrichQuestion(q: Question, topic: string): Question {
+  const formattedTopic = topic.replace(/_/g, ' ');
+
+  // 1. Píldora Informativa (conceptIntro)
+  let conceptIntro = q.conceptIntro;
+  if (!conceptIntro || conceptIntro.trim().length === 0) {
+    if (q.explanation && q.explanation.length > 5) {
+      const cleanExp = q.explanation.replace(/\[.*?\]:?\s*/g, '');
+      conceptIntro = cleanExp.split('.')[0] + '.';
+    } else {
+      conceptIntro = `Concepto clave sobre ${formattedTopic} en TypeScript.`;
+    }
+  }
+
+  // 2. Bloque IDE de Código (codeSnippet)
+  let codeSnippet = q.codeSnippet;
+  if (!codeSnippet || codeSnippet.trim().length === 0) {
+    const codeMatch = q.prompt.match(/`([^`]+)`/g);
+    if (codeMatch && codeMatch.length > 0) {
+      codeSnippet = codeMatch.map((m) => m.replace(/`/g, '')).join('\n');
+    } else {
+      codeSnippet = `// ${formattedTopic}\n// Revisa la estructura:\nlet resultado = ${JSON.stringify(q.options[q.correctOptionIndex])};`;
+    }
+  }
+
+  return {
+    ...q,
+    conceptIntro,
+    codeSnippet,
+    isCodeOptions: q.isCodeOptions ?? true,
+  };
+}
+
 // --- AI SERVICE ---
 
 export class AIService {
@@ -47,174 +107,215 @@ export class AIService {
     return process.env.EXPO_PUBLIC_GEMINI_API_KEY;
   }
 
-  // Generates questions via Gemini API or local question bank
+  // Per-topic session offset tracker so each session picks a different slice
+  private static topicOffset: Record<string, number> = {};
+
+  // Generates questions via Gemini API or local question bank in aleatory order
   public static async generateSessionQuestions(topic: string, isAiGenerated: boolean = false): Promise<Question[]> {
+    let questions: Question[] = [];
+
     if (isAiGenerated) {
-      return this.generateAiQuestionsForTopic(topic, 5);
+      questions = await this.generateAiQuestionsForTopic(topic, 5);
+    } else {
+      const sourceQuestions = questionBank[topic] || [];
+      if (sourceQuestions.length === 0) {
+        questions = await this.generateAiQuestionsForTopic(topic, 5);
+      } else {
+        // Shuffle with proper Fisher-Yates, then pick 5 from a rotating offset so
+        // each session feels fresh even if the same topic is replayed immediately
+        const shuffled = shuffleArray([...sourceQuestions]);
+        questions = shuffled.slice(0, Math.min(5, shuffled.length));
+      }
     }
 
-    let questions = questionBank[topic] || [];
-
-    if (questions.length === 0) {
-      return this.generateAiQuestionsForTopic(topic, 5);
-    }
-
-    return questions;
+    // ENRIQUECER CON PÍLDORA INFORMATIVA Y CÓDIGO IDE + MEZCLAR ALEATORIAMENTE
+    const enriched = questions.map((q) => enrichQuestion(q, topic));
+    const shuffledQuestions = shuffleArray(enriched);
+    return shuffledQuestions.map((q) => shuffleQuestion(q));
   }
 
   // Calls Gemini API with model fallback chain; falls back to local bank on failure
   public static async generateAiQuestionsForTopic(topic: string, count: number = 5): Promise<Question[]> {
-    const apiKey = this.getApiKey();
+    const rawKey = this.getApiKey() ?? '';
+    // Strip accidental whitespace, newlines, and stray @ characters
+    const cleanApiKey = rawKey.replace(/[\s@]/g, '');
 
-    if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('tu_api_key')) {
-      try {
-        const formattedTopic = topic.replace(/_/g, ' ');
-        const promptText = `Eres un tutor experto en TypeScript. Genera exactamente ${count} preguntas de opción múltiple para el tema "${formattedTopic}".
-Genera un arreglo JSON con exactamente la siguiente estructura:
+    // Validar que exista una clave con longitud mínima (soporta formatos clásicos "AIza..." y nuevos "AQ...")
+    if (cleanApiKey.length < 20) {
+      if (cleanApiKey.length === 0) {
+        console.warn('[AIService] EXPO_PUBLIC_GEMINI_API_KEY no está configurada. Usando banco local.');
+      } else {
+        console.warn(`[AIService] API key demasiado corta (${cleanApiKey.length} caracteres). Usando banco local.`);
+      }
+      return this.generateLocalFallbackQuestions(topic);
+    }
+
+    const formattedTopic = topic.replace(/_/g, ' ');
+    const promptText = `Eres un tutor interactivo de TypeScript estilo Mimo y SoloLearn. Genera exactamente ${count} ejercicios prácticos basados en CÓDIGO para el tema "${formattedTopic}".
+Responde ÚNICAMENTE con un arreglo JSON válido con esta estructura exacta:
 [
   {
-    "prompt": "Enunciado claro de la pregunta",
-    "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-    "correctOptionIndex": 0,
-    "explanation": "Explicación concisa y educativa",
-    "difficulty": "medium"
+    "conceptIntro": "Una oración clara explicando el micro-concepto involucrado",
+    "prompt": "¿Qué imprime este código? (o 'Completa la línea' / 'Identifica el error')",
+    "codeSnippet": "let ciudad: string = \\"Tokyo\\";\\nconsole.log(ciudad);",
+    "isCodeOptions": true,
+    "options": ["\\"ciudad\\"", "ciudad", "Tokyo", "undefined"],
+    "correctOptionIndex": 2,
+    "explanation": "Explicación concisa y educativa de por qué ese es el resultado",
+    "difficulty": "easy"
   }
 ]
 Condiciones:
-- correctOptionIndex debe ser un número entero entre 0 y 3 (varía las respuestas correctas).
-- difficulty debe ser "easy", "medium" o "hard".
-- Responde ÚNICAMENTE con el objeto JSON válido.`;
+- codeSnippet debe ser código TypeScript válido y legible.
+- options debe tener exactamente 4 opciones de respuesta cortas y claras.
+- correctOptionIndex debe ser un número entero de 0 a 3.`;
 
-        const cleanApiKey = apiKey.trim();
-        console.log(`[AIService] Requesting questions from Gemini for: "${topic}"...`);
+    console.log(`[AIService] Solicitando preguntas a Gemini para: "${topic}"...`);
 
-        // Fallback model list — tries newest first, falls back on 503
-        const fallbackModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-1.5-flash'];
+    // Fallback model list — tries active models in priority order
+    const fallbackModels = [
+      'gemini-3.5-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.7-flash',
+      'gemini-3.8-flash',
+      'gemini-flash-latest',
+    ];
 
-        for (const model of fallbackModels) {
-          try {
-            const response = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  contents: [{ parts: [{ text: promptText }] }],
-                  generationConfig: {
-                    responseMimeType: 'application/json',
-                    temperature: 0.7,
-                  },
-                }),
+    for (const model of fallbackModels) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanApiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText }] }],
+              generationConfig: {
+                responseMimeType: 'application/json',
+                temperature: 0.7,
+              },
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (rawText) {
+            try {
+              const parsed = JSON.parse(rawText);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                console.log(`[AIService] ✅ Preguntas generadas con ${model} (${parsed.length} preguntas).`);
+                return parsed.map((q: any, i: number) => ({
+                  id: `q_gemini_${topic}_${Date.now()}_${i}`,
+                  topic,
+                  conceptIntro: q.conceptIntro || `Concepto clave sobre ${formattedTopic}`,
+                  prompt: q.prompt || `¿Qué imprime el siguiente código?`,
+                  codeSnippet: q.codeSnippet || undefined,
+                  isCodeOptions: q.isCodeOptions ?? true,
+                  options: Array.isArray(q.options) && q.options.length === 4
+                    ? q.options
+                    : ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
+                  correctOptionIndex:
+                    typeof q.correctOptionIndex === 'number' &&
+                    q.correctOptionIndex >= 0 &&
+                    q.correctOptionIndex <= 3
+                      ? q.correctOptionIndex
+                      : 0,
+                  explanation: q.explanation || 'Explicación generada por IA.',
+                  difficulty: (['easy', 'medium', 'hard'].includes(q.difficulty)
+                    ? q.difficulty
+                    : 'medium') as Difficulty,
+                }));
               }
-            );
-
-            if (response.ok) {
-              const data = await response.json();
-              const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (rawText) {
-                const parsed = JSON.parse(rawText);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                  console.log(`[AIService] Questions generated successfully with model ${model}.`);
-                  return parsed.map((q: any, i: number) => ({
-                    id: `q_gemini_${topic}_${Date.now()}_${i}`,
-                    topic,
-                    prompt: `[Gemini IA]: ${q.prompt}`,
-                    options: Array.isArray(q.options) && q.options.length === 4 ? q.options : ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
-                    correctOptionIndex: typeof q.correctOptionIndex === 'number' && q.correctOptionIndex >= 0 && q.correctOptionIndex <= 3 ? q.correctOptionIndex : 0,
-                    explanation: `[Gemini IA]: ${q.explanation || 'Explicación generada por IA.'}`,
-                    difficulty: (['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium') as Difficulty,
-                  }));
-                }
-              }
-            } else {
-              const status = response.status;
-              if (status === 429) {
-                console.warn(`[AIService] Rate limit reached (HTTP 429). Stopping retries.`);
-                break; // Detener reintentos para no malgastar cuota si el límite de usuario fue alcanzado
-              }
-              console.warn(`[AIService] Model ${model} unavailable (HTTP ${status}). Trying next...`);
+            } catch (parseErr) {
+              console.warn(`[AIService] Error parseando JSON del modelo ${model}:`, parseErr);
             }
-          } catch (modelErr) {
-            console.warn(`[AIService] Error calling ${model}:`, modelErr);
+          }
+        } else {
+          const status = response.status;
+          let errorBody = '';
+          try { errorBody = await response.text(); } catch (_) {}
+          if (status === 401 || status === 403) {
+            console.warn(`[AIService] ❌ HTTP ${status} — API key rechazada. Respuesta: ${errorBody.slice(0, 300)}`);
+            break; // No tiene sentido reintentar si la key es inválida
+          } else if (status === 429) {
+            console.warn(`[AIService] ⚠️ Rate limit alcanzado (HTTP 429). Deteniendo reintentos.`);
+            break;
+          } else if (status === 400) {
+            console.warn(`[AIService] ❌ HTTP 400 Bad Request con ${model}. Respuesta: ${errorBody.slice(0, 300)}`);
+          } else {
+            console.warn(`[AIService] Modelo ${model} no disponible (HTTP ${status}). Intentando siguiente...`);
           }
         }
-      } catch (error) {
-        console.warn('[AIService] Network or API error, using local fallback:', error);
+      } catch (modelErr) {
+        console.warn(`[AIService] Error de red al llamar a ${model}:`, modelErr);
       }
-    } else {
-      console.warn('[AIService] No valid EXPO_PUBLIC_GEMINI_API_KEY found. Using local bank.');
     }
 
+    console.warn('[AIService] Todos los modelos fallaron. Usando banco local de preguntas.');
     return this.generateLocalFallbackQuestions(topic);
   }
 
   // Local fallback question generator when no API key or no network
   private static generateLocalFallbackQuestions(topic: string): Question[] {
-    const formattedTopic = topic.replace(/_/g, ' ');
     const sourceQuestions = questionBank[topic] || [];
 
     if (sourceQuestions.length > 0) {
-      const selected = [...sourceQuestions].sort(() => 0.5 - Math.random()).slice(0, 5);
+      // Use proper Fisher-Yates shuffle (via shuffleArray) — biased sort() removed
+      const shuffled = shuffleArray([...sourceQuestions]);
 
-      return selected.map((q, i) => {
-        const originalCorrectOption = q.options[q.correctOptionIndex];
-        const shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
-        const newCorrectIndex = shuffledOptions.indexOf(originalCorrectOption);
+      // Rotate starting offset so replaying same topic gives different questions
+      const poolSize = shuffled.length;
+      const offset = (AIService.topicOffset[topic] ?? 0) % poolSize;
+      AIService.topicOffset[topic] = (offset + 5) % poolSize;
 
-        return {
-          ...q,
-          id: `q_ai_${topic}_${Date.now()}_${i}`,
-          prompt: `[IA Refuerzo]: ${q.prompt}`,
-          options: shuffledOptions,
-          correctOptionIndex: newCorrectIndex,
-          explanation: `[IA Refuerzo - ${formattedTopic}]: ${q.explanation}`,
-        };
-      });
+      const rotated = [...shuffled.slice(offset), ...shuffled.slice(0, offset)];
+      const selected = rotated.slice(0, Math.min(5, poolSize));
+
+      return selected.map((q, i) => ({
+        ...q,
+        id: `q_ai_${topic}_${Date.now()}_${i}`,
+        // No ugly [IA Refuerzo] prefix — the question speaks for itself
+      }));
     }
 
     return [
       {
         id: `q_ai_gen_1`,
         topic,
-        prompt: `[IA Refuerzo]: En ${formattedTopic}, ¿cuál es el mecanismo principal para garantizar la seguridad de tipos?`,
-        options: [
-          'Usar el tipo any en todas las variables',
-          'Aplicar anotaciones de tipo estáticas y verificación del compilador',
-          'Desactivar el análisis de TypeScript',
-          'Convertir todas las variables a objetos'
-        ],
-        correctOptionIndex: 1,
-        explanation: `[IA Refuerzo]: TypeScript verifica tipos estáticamente para prevenir errores en tiempo de compilación.`,
+        conceptIntro: `Al imprimir una variable en TypeScript, la consola muestra el valor almacenado en su interior.`,
+        prompt: `¿Qué imprimirá el siguiente código en la consola?`,
+        codeSnippet: `let ciudad: string = "Tokyo";\nconsole.log(ciudad);`,
+        isCodeOptions: true,
+        options: ['"ciudad"', 'ciudad', 'Tokyo', 'undefined'],
+        correctOptionIndex: 2,
+        explanation: `Al imprimir 'ciudad', el programa devuelve la cadena de texto almacenada: "Tokyo".`,
         difficulty: 'easy'
       },
       {
         id: `q_ai_gen_2`,
         topic,
-        prompt: `[IA Ejercicio]: ¿Qué beneficio clave aporta utilizar ${formattedTopic} correctamente?`,
-        options: [
-          'Prevenir errores de asignación e incompatibilidad antes de ejecutar el código',
-          'Prevenir errores de asignación e incompatibilidad antes de ejecutar el código',
-          'Hacer que el código corra más rápido en el navegador',
-          'Eliminar las funciones de JavaScript',
-          'Aumentar el tamaño del archivo compilado'
-        ],
-        correctOptionIndex: 0,
-        explanation: `[IA Refuerzo]: El chequeo de tipos estático evita errores comunes de tiempo de ejecución.`,
+        conceptIntro: `Las variables declaradas con 'const' son de solo lectura y no pueden ser reasignadas.`,
+        prompt: `¿Cuál es el resultado de ejecutar este código?`,
+        codeSnippet: `const edad = 25;\nedad = 26;\nconsole.log(edad);`,
+        isCodeOptions: true,
+        options: ['26', 'Error de compilación (TypeError)', '25', 'undefined'],
+        correctOptionIndex: 1,
+        explanation: `Reasignar una constante declarada con 'const' lanza un error de compilación en TypeScript.`,
         difficulty: 'medium'
       },
       {
         id: `q_ai_gen_3`,
         topic,
-        prompt: `[IA Desafío]: ¿Cuál de los siguientes enunciados es FALSO sobre ${formattedTopic}?`,
-        options: [
-          'Mejora la navegación y autocompletado en el editor',
-          'Facilita la refactorización segura del código',
-          'Las comprobaciones de tipo se ejecutan en tiempo de ejecución dentro del navegador',
-          'Permite detectar incoherencias en los datos'
-        ],
-        correctOptionIndex: 2,
-        explanation: `[IA Refuerzo]: Los tipos en TypeScript son eliminados durante la transpilación y NO se ejecutan en tiempo de ejecución.`,
-        difficulty: 'hard'
+        conceptIntro: `El tipo booleano solo puede contener dos valores primitivos: true o false.`,
+        prompt: `Completa el espacio en blanco para asignar un booleano válido:`,
+        codeSnippet: `let esValido: boolean = ___;`,
+        isCodeOptions: true,
+        options: ['true', '"true"', '1', 'Boolean()'],
+        correctOptionIndex: 0,
+        explanation: `El valor primitivo booleano directo en TypeScript es 'true' o 'false'.`,
+        difficulty: 'easy'
       }
     ];
   }
@@ -258,24 +359,28 @@ Condiciones:
   }
 }
 
-// --- ENGINE ---
-
+// ============================================================================
+// CLASE PRINCIPAL: AntigravityEngine
+// Administra el estado del estudiante: vidas, rachas, XP acumulada,
+// sesiones activas de preguntas y el diagnóstico analítico de temas.
+// ============================================================================
 export class AntigravityEngine {
-  private user: UserProfile;
-  private currentSession: SessionModule | null = null;
-  private currentQuestionIndex: number = 0;
-  private readonly ONE_HOUR_MS = 60 * 60 * 1000;
+  private user: UserProfile; // Datos del perfil del estudiante actual
+  private currentSession: SessionModule | null = null; // Módulo o sesión en curso
+  private currentQuestionIndex: number = 0; // Índice de la pregunta actual (0 a 4)
+  private readonly ONE_HOUR_MS = 60 * 60 * 1000; // 1 hora en milisegundos para recarga de vidas
 
   constructor(userName: string, onModuleCompletedCallback?: () => void) {
+    // Inicialización del perfil por defecto
     this.user = {
       id: "usr_101",
       name: userName,
-      lives: 15,
+      lives: 15, // 15 vidas iniciales para permitir amplio aprendizaje
       maxLives: 15,
       lastLivesRestoreTimestamp: Date.now(),
       streak: 0,
       xp: 0,
-      analytics: { topicErrorCount: {} }
+      analytics: { topicErrorCount: {}, topicSuccessCount: {} }
     };
   }
 
@@ -387,15 +492,30 @@ export class AntigravityEngine {
     // Disparar carga diferida (lazy load) en background
     this.triggerLazyLoadIfNeeded().catch(() => { });
 
+    const topic = currentQ.topic;
+    if (!this.user.analytics.topicSuccessCount) this.user.analytics.topicSuccessCount = {};
+    if (!this.user.analytics.topicErrorCount) this.user.analytics.topicErrorCount = {};
+
     if (isCorrect) {
       this.user.xp += 20;
-      return { isCorrect: true, explanation: "¡Correcto!", livesLeft: this.user.lives };
+      this.user.analytics.topicSuccessCount[topic] = (this.user.analytics.topicSuccessCount[topic] || 0) + 1;
+
+      // Reducir errores registrados al practicar y responder correctamente
+      if (this.user.analytics.topicErrorCount[topic] && this.user.analytics.topicErrorCount[topic] > 0) {
+        this.user.analytics.topicErrorCount[topic] -= 1;
+        // Si llega a 0, se elimina del mapa de áreas débiles al haber sido superado
+        if (this.user.analytics.topicErrorCount[topic] <= 0) {
+          delete this.user.analytics.topicErrorCount[topic];
+        }
+      }
+
+      // Always return the full explanation so the user learns WHY the answer is correct
+      return { isCorrect: true, explanation: currentQ.explanation, livesLeft: this.user.lives };
     } else {
       // Restar 1 vida por respuesta incorrecta
       this.user.lives = Math.max(0, this.user.lives - 1);
 
       // Track error analytics per topic
-      const topic = currentQ.topic;
       this.user.analytics.topicErrorCount[topic] = (this.user.analytics.topicErrorCount[topic] || 0) + 1;
 
       return {

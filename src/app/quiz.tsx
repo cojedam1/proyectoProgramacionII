@@ -54,8 +54,8 @@ export default function QuizScreen() {
     fadeAnim.setValue(0);
     slideAnim.setValue(30);
     Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 400, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 400, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
   }
 
@@ -69,11 +69,11 @@ export default function QuizScreen() {
 
   function shakeError() {
     Animated.sequence([
-      Animated.timing(shakeAnim, { toValue: 10, duration: 60, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -10, duration: 60, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 8, duration: 60, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: -8, duration: 60, useNativeDriver: true }),
-      Animated.timing(shakeAnim, { toValue: 0, duration: 60, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 10, duration: 60, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(shakeAnim, { toValue: -10, duration: 60, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(shakeAnim, { toValue: 8, duration: 60, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(shakeAnim, { toValue: -8, duration: 60, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 60, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
   }
 
@@ -232,7 +232,15 @@ export default function QuizScreen() {
             </Text>
           </View>
 
-          {/* Question card */}
+          {/* Micro-Concept Intro Box */}
+          {currentQ.conceptIntro && (
+            <View style={styles.conceptBox}>
+              <Text style={styles.conceptIcon}>💡</Text>
+              <Text style={styles.conceptText}>{currentQ.conceptIntro}</Text>
+            </View>
+          )}
+
+          {/* Question Prompt */}
           <Animated.View
             style={[
               styles.questionCard,
@@ -245,6 +253,29 @@ export default function QuizScreen() {
             <Text style={styles.questionText}>{currentQ.prompt}</Text>
           </Animated.View>
 
+          {/* Dark IDE Code Editor Snippet */}
+          {currentQ.codeSnippet && (
+            <View style={styles.ideContainer}>
+              <View style={styles.ideHeader}>
+                <View style={styles.ideDots}>
+                  <View style={[styles.ideDot, { backgroundColor: '#FF5F56' }]} />
+                  <View style={[styles.ideDot, { backgroundColor: '#FFBD2E' }]} />
+                  <View style={[styles.ideDot, { backgroundColor: '#27C93F' }]} />
+                </View>
+                <Text style={styles.ideFileTitle}>app.ts</Text>
+                <View style={styles.ideRightHeader}>
+                  <View style={styles.ideLangBadge}>
+                    <Text style={styles.ideLangText}>TS</Text>
+                  </View>
+                  <Text style={styles.ideCopyText}>Copy</Text>
+                </View>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.ideCodeScroll}>
+                <Text style={styles.ideCodeText}>{currentQ.codeSnippet}</Text>
+              </ScrollView>
+            </View>
+          )}
+
           {/* Options */}
           <View style={styles.optionsContainer}>
             {currentQ.options.map((option, index) => (
@@ -252,6 +283,7 @@ export default function QuizScreen() {
                 key={index}
                 label={option}
                 index={index}
+                isCodeStyle={currentQ.isCodeOptions ?? true}
                 selected={selectedIndex === index}
                 answerState={answerState}
                 correctIndex={currentQ.correctOptionIndex}
@@ -268,10 +300,20 @@ export default function QuizScreen() {
                 answerState === 'correct' ? styles.feedbackCorrect : styles.feedbackWrong,
               ]}
             >
-              <Text style={styles.feedbackEmoji}>
-                {answerState === 'correct' ? '🎉' : '💡'}
-              </Text>
-              <Text style={styles.feedbackText}>{explanation}</Text>
+              <View style={styles.feedbackInner}>
+                <View style={styles.feedbackHeaderRow}>
+                  <Text style={styles.feedbackEmoji}>
+                    {answerState === 'correct' ? '🎉' : '❌'}
+                  </Text>
+                  <Text style={[
+                    styles.feedbackHeaderLabel,
+                    { color: answerState === 'correct' ? '#10B981' : '#EF4444' }
+                  ]}>
+                    {answerState === 'correct' ? '¡Correcto!' : 'Incorrecto'}
+                  </Text>
+                </View>
+                <Text style={styles.feedbackText}>{explanation}</Text>
+              </View>
             </Animated.View>
           )}
 
@@ -298,6 +340,7 @@ export default function QuizScreen() {
 function OptionButton({
   label,
   index,
+  isCodeStyle,
   selected,
   answerState,
   correctIndex,
@@ -305,6 +348,7 @@ function OptionButton({
 }: {
   label: string;
   index: number;
+  isCodeStyle?: boolean;
   selected: boolean;
   answerState: AnswerState;
   correctIndex: number;
@@ -336,9 +380,9 @@ function OptionButton({
   }
 
   const handlePressIn = () =>
-    Animated.spring(scale, { toValue: 0.97, useNativeDriver: true }).start();
+    Animated.spring(scale, { toValue: 0.97, useNativeDriver: Platform.OS !== 'web' }).start();
   const handlePressOut = () =>
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+    Animated.spring(scale, { toValue: 1, useNativeDriver: Platform.OS !== 'web' }).start();
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
@@ -354,7 +398,7 @@ function OptionButton({
         <View style={[styles.letterBadge, { backgroundColor: letterBg }]}>
           <Text style={styles.letterText}>{letters[index]}</Text>
         </View>
-        <Text style={textStyle}>{label}</Text>
+        <Text style={[styles.optionText, isCodeStyle && styles.codeOptionText]}>{label}</Text>
       </Pressable>
     </Animated.View>
   );
@@ -427,12 +471,99 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: CARD_BORDER,
     padding: 22,
-    marginBottom: 20,
+    marginBottom: 16,
     shadowColor: PURPLE,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 6,
+  },
+  conceptBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1E143B',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#3D2875',
+    padding: 14,
+    marginBottom: 16,
+    gap: 10,
+  },
+  conceptIcon: {
+    fontSize: 20,
+  },
+  conceptText: {
+    flex: 1,
+    color: '#D4C5FC',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  ideContainer: {
+    backgroundColor: '#0A0614',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#2D1B69',
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  ideHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#150B2E',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#25144D',
+  },
+  ideDots: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  ideDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  ideFileTitle: {
+    color: '#8A7BB0',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  ideLangBadge: {
+    backgroundColor: '#3178C6',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  ideLangText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  ideRightHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  ideCopyText: {
+    color: '#60A5FA',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  ideCodeScroll: {
+    padding: 16,
+  },
+  ideCodeText: {
+    color: '#F3EEFF',
+    fontSize: 15,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    lineHeight: 22,
+  },
+  codeOptionText: {
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    color: '#00F0FF',
   },
   questionText: { color: '#E9E3FF', fontSize: 17, lineHeight: 26, fontWeight: '500' },
   optionsContainer: { gap: 12, marginBottom: 20 },
@@ -462,10 +593,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     padding: 16,
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'flex-start',
     marginBottom: 16,
+  },
+  feedbackInner: {
+    gap: 8,
+  },
+  feedbackHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  feedbackHeaderLabel: {
+    fontSize: 15,
+    fontWeight: '800',
   },
   feedbackCorrect: { backgroundColor: '#064E3B22', borderColor: '#10B981' },
   feedbackWrong: { backgroundColor: '#7F1D1D22', borderColor: '#EF4444' },

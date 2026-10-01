@@ -20,6 +20,7 @@ const CARD_BORDER = '#2D2060';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
@@ -28,6 +29,11 @@ export default function LoginScreen() {
   const handleAuth = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert('Campos incompletos', 'Por favor llena todos los campos.');
+      return;
+    }
+
+    if (!isLogin && !username.trim()) {
+      Alert.alert('Nombre requerido', 'Por favor ingresa tu nombre de usuario.');
       return;
     }
 
@@ -48,14 +54,26 @@ export default function LoginScreen() {
         router.replace('/');
       }
     } else {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password: password,
+        options: {
+          data: { name: username.trim() }
+        }
       });
       if (error) {
         Alert.alert('Error al registrarse', error.message);
       } else {
-        Alert.alert('¡Cuenta Creada!', 'Se ha registrado tu usuario exitosamente.');
+        if (data.user) {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            name: username.trim(),
+            xp: 0,
+            streak: 0,
+            updated_at: new Date().toISOString(),
+          });
+        }
+        Alert.alert('¡Cuenta Creada!', `Bienvenido, ${username.trim()}`);
         router.replace('/');
       }
     }
@@ -87,6 +105,17 @@ export default function LoginScreen() {
             ? 'Ingresa tus datos para continuar tu aprendizaje'
             : 'Llena los campos para registrar tu nuevo usuario'}
         </Text>
+
+        {!isLogin && (
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre de Usuario"
+            placeholderTextColor="#666"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="words"
+          />
+        )}
 
         <TextInput
           style={styles.input}
