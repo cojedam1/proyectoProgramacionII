@@ -218,8 +218,8 @@ Condiciones:
                     : ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
                   correctOptionIndex:
                     typeof q.correctOptionIndex === 'number' &&
-                    q.correctOptionIndex >= 0 &&
-                    q.correctOptionIndex <= 3
+                      q.correctOptionIndex >= 0 &&
+                      q.correctOptionIndex <= 3
                       ? q.correctOptionIndex
                       : 0,
                   explanation: q.explanation || 'Explicación generada por IA.',
@@ -235,7 +235,7 @@ Condiciones:
         } else {
           const status = response.status;
           let errorBody = '';
-          try { errorBody = await response.text(); } catch (_) {}
+          try { errorBody = await response.text(); } catch (_) { }
           if (status === 401 || status === 403) {
             console.warn(`[AIService] ❌ HTTP ${status} — API key rechazada. Respuesta: ${errorBody.slice(0, 300)}`);
             break; // No tiene sentido reintentar si la key es inválida
@@ -325,8 +325,9 @@ Condiciones:
     const apiKey = this.getApiKey();
     if (apiKey && apiKey.trim().length > 0 && !apiKey.includes('tu_api_key')) {
       try {
+        console.log('[AIService] Consultando explicación de error con Gemini...');
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey.trim()}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey.trim()}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -338,10 +339,15 @@ Condiciones:
         if (response.ok) {
           const data = await response.json();
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) return `[Tutor Gemini IA]: ${text.trim()}`;
+          if (text) {
+            console.log('[AIService] ✅ Explicación recibida de Gemini.');
+            return `[Tutor Gemini IA]: ${text.trim()}`;
+          }
+        } else {
+          console.warn(`[AIService] Falló la explicación del error (HTTP ${response.status}).`);
         }
       } catch (e) {
-        // Fallback
+        console.warn('[AIService] Error de red al solicitar explicación a Gemini:', e);
       }
     }
     return `[Tutor IA]: El compilador indica un problema en el tipado. Intenta revisar si el valor retornado coincide con la interfaz declarada.`;
